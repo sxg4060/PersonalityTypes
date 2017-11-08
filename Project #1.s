@@ -288,6 +288,12 @@ main
 			BL Init_UART0_IRQ		;Initialize UART0 for serial driver
 			CPSIE I					;Unmask interrupts from KL46 devices
 ;----------------------------------------------------------------
+			LDR R0,=Welcome			;Load the welcome message into R0
+			MOVS R1,#MAX_STRING		;Load in a buffer capacity for the string
+			BL PutStringSB			;Display the welcome message on the terminal
+			BL CRLF					;Carriage Return and Line Feed (equivalent to hitting the enter key)
+			LDR R0,=Q1				;Load the first question into R0
+			BL PutStringSB			;Display the first question
 			
 ;>>>>>   end main program code <<<<<
 ;Stay here
@@ -996,6 +1002,39 @@ PutNumUB	PROC {R0-R13},{}
 			BL PutNumU					;Call PutNumU to display the byte
 			POP{R0-R7,PC}				;Pop saved register
 			ENDP						;End Subroutine
+;-----------------------------------------------------------------
+DisplayChoices	PROC {R0-R13},{}
+;Subroutine that displays all the choices to the user
+;Inputs: N/A
+;Outputs:
+;Displays the choices in R0
+			PUSH {R0-R1,LR}				;Push registers to modify into stack
+			MOVS R1,#MAX_STRING			;Set a buffer capacity
+			BL CRLF						;Enter Key
+			LDR R0,=DS					;Load Strongly Disagree choice
+			BL PutStringSB				;Display the choice
+			BL CRLF						;Enter Key
+			LDR R0,=DM					;Load Disagree moderately
+			BL PutStringSB				;Display the choice
+			BL CRLF						;Enter Key
+			LDR R0,=DL					;Load Disagree a little
+			BL PutStringSB				;Display the choice
+			BL CRLF						;Enter Key
+			LDR R0,=NAND				;Load neither agree nor disagree prompt
+			BL PutStringSB				;Display the choice
+			BL CRLF						;Enter Key
+			LDR R0,=AL					;Load agree a little prompt
+			BL PutStringSB				;Display the choice
+			BL CRLF						;Enter Key
+			LDR R0,=AM					;Load agree moderately choice
+			BL PutStringSB				;Display the choice
+			BL CRLF						;Enter Key
+			LDR R0,=AS					;Load agree strongly
+			BL CRLF						;Enter Key
+			POP {R0-R1,PC}				;Pop registers
+			ENDP						;End subroutine
+;-------------------------------------------------------------------
+
 ;>>>>>   end subroutine code <<<<<
             ALIGN
 ;****************************************************************
@@ -1068,7 +1107,7 @@ __Vectors_Size  EQU     __Vectors_End - __Vectors
             AREA    MyConst,DATA,READONLY
 ;>>>>> begin constants here <<<<<
 ;Welcome Message
-Welcome DCB "Welcome to the personality test!",0
+Welcome DCB "Welcome to the personality test! Let's begin!",0
 ;Questions
 Q1	DCB		"I see myself as extraverted, enthusiatic.",0
 Q2	DCB		"I see myself as critical, quarrelsome.",0
@@ -1081,32 +1120,32 @@ Q8	DCB		"I see myself as disorganized, careless.",0
 Q9	DCB		"I see myself as calm, emotionally stable.",0
 Q10 DCB		"I see myself as conventional, uncreative.",0
 ;Choices per question
-DS	DCB "Disagree Strongly",0
-DM	DCB "Disagree Moderately",0
-DL	DCB	"Disagree a little",0
-NAND DCB "Neither agree nor diagree",0
-AL DCB	"Agree a little",0
-AM DCB "Agree moderately",0
-AS DCB "Agree strongly",0
+DS	DCB 	"A: Disagree Strongly",0
+DM	DCB 	"B: Disagree Moderately",0
+DL	DCB		"C: Disagree a little",0
+NAND DCB 	"D: Neither agree nor diagree",0
+AL DCB		"E: Agree a little",0
+AM DCB 		"F: Agree moderately",0
+AS DCB 		"G: Agree strongly",0
 ;Personality Types
-ISTJ DCB "ISTJ - Logistician",0
-INFJ DCB "INFJ - Advocate",0
-INFP DCB "INFP - Mediator",0
-INTJ DCB "INTJ - Architect",0
-INTP DCB "INTP - Logician",0
-ISTP DCB "ISTP - Virtuoso",0
-ISFJ DCB "ISFJ - Defender",0
-ISFP DCB "ISFP - Adventurer",0
-ENTJ DCB "ENTJ - Commander",0
-ENTP DCB "ENTP - Debater",0
-ENFJ DCB "ENFJ - Protagonist",0
-ENFP DCB "ENFP - Campaigner",0
-ESFJ DCB "ESFJ - Consul",0
-ESTJ DCB "ESTJ - Executive",0
-ESTP DCB "ESTP - Entrepreneur",0
-ESFP DCB "ESFP - Entertainer",0
+ISTJ DCB 	"ISTJ - Logistician",0
+INFJ DCB 	"INFJ - Advocate",0
+INFP DCB 	"INFP - Mediator",0
+INTJ DCB 	"INTJ - Architect",0
+INTP DCB 	"INTP - Logician",0
+ISTP DCB 	"ISTP - Virtuoso",0
+ISFJ DCB 	"ISFJ - Defender",0
+ISFP DCB 	"ISFP - Adventurer",0
+ENTJ DCB 	"ENTJ - Commander",0
+ENTP DCB 	"ENTP - Debater",0
+ENFJ DCB 	"ENFJ - Protagonist",0
+ENFP DCB 	"ENFP - Campaigner",0
+ESFJ DCB 	"ESFJ - Consul",0
+ESTJ DCB 	"ESTJ - Executive",0
+ESTP DCB 	"ESTP - Entrepreneur",0
+ESFP DCB 	"ESFP - Entertainer",0
 ;Goodbye Message
-Bye	 DCB "Thank you for taking the test! Goodbye now.",0
+Bye	 DCB 	"Thank you for taking the test! Goodbye now.",0
 ;>>>>>   end constants here <<<<<		
             ALIGN
 ;****************************************************************
@@ -1122,11 +1161,13 @@ TxQBuffer   SPACE   Q_BUF_SZ	;Transmit Queue Buffer
 	ALIGN
 TxQRecord	SPACE	Q_REC_SZ	;Transmit Queue Record
 	ALIGN 
-Count		SPACE	OneByte
+;Count		SPACE	OneByte
+;	ALIGN
+;RunStopWatch SPACE 	1
 	ALIGN
-RunStopWatch SPACE 	1
+String		SPACE	MAX_STRING
 	ALIGN
-String		SPACE	MAX_STRING	
+Answer		SPACE	10
 ;>>>>>   end variables here <<<<<
             ALIGN
             END

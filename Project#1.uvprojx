@@ -10,6 +10,7 @@
       <TargetName>Target 1</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
+      <pCCUsed>5060528::V5.06 update 5 (build 528)::ARMCC</pCCUsed>
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
@@ -387,17 +388,17 @@
             <File>
               <FileName>HardFault_LCD.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\Exercise10\HardFault_LCD.s</FilePath>
+              <FilePath>.\HardFault_LCD.s</FilePath>
             </File>
             <File>
               <FileName>MKL46Z4.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\Exercise10\MKL46Z4.s</FilePath>
+              <FilePath>.\MKL46Z4.s</FilePath>
             </File>
             <File>
               <FileName>Start.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\Exercise10\Start.s</FilePath>
+              <FilePath>.\Start.s</FilePath>
             </File>
           </Files>
         </Group>

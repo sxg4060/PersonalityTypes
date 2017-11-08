@@ -192,7 +192,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Exercise10\HardFault_LCD.s</PathWithFileName>
+      <PathWithFileName>.\HardFault_LCD.s</PathWithFileName>
       <FilenameWithoutPath>HardFault_LCD.s</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -204,7 +204,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Exercise10\MKL46Z4.s</PathWithFileName>
+      <PathWithFileName>.\MKL46Z4.s</PathWithFileName>
       <FilenameWithoutPath>MKL46Z4.s</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -216,7 +216,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Exercise10\Start.s</PathWithFileName>
+      <PathWithFileName>.\Start.s</PathWithFileName>
       <FilenameWithoutPath>Start.s</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
