@@ -394,245 +394,245 @@ Init_PIT_IRQ		PROC {R0-R13},{}
 ;----------------------------------------------------------------------------------
 UART0_ISR			PROC {R0-R13},{}
 ;Interrupt Service Routine
-			CPSID I									;Mask all interrupts
-			PUSH {LR}								;Push registers to stack
+			CPSID I								;Mask all interrupts
+			PUSH {LR}							;Push registers to stack
 ;Interrupt source can be found in the UART0_S1
-			LDR R2,=UART0_BASE						;Load UART0_BASE into R2
-			LDRB R0,[R2,#UART0_C2_OFFSET]			;Load UART0_C2 into R0
-			MOVS R1,#UART0_C2_TIE_MASK				;Move C2_TIE_MASK into R1
-			ANDS R0,R0,R1							;AND R0 and R1 into C2
-			BEQ RxEnqueue							;If ANDS returns a 1, then branch to RxEnqueue
-TxInterrupt LDRB R0,[R2,#UART0_S1_OFFSET]			;Load UART0_S1 into R0
-			MOVS R1,#UART0_S1_TDRE_MASK				;Move TDRE_MASK into R1
-			ANDS R0,R0,R1							;AND R0 and R1 into S1
-			BEQ RxEnqueue							;If ANDS returns a 1, then branch to RxEnqueue
-			LDR R1,=TxQRecord						;Load the Transmit Queue into R1
-			BL Dequeue								;Dequeue a character
-			BCS DisableTxI							;Branch if dequeue was unsuccessful 
-			STRB R0,[R2,#UART0_D_OFFSET]			;Store the character dequeued into UART0_D
-			B RxEnqueue								;Branch to RxEnqueue 
-DisableTxI	MOVS R1,#UART0_C2_T_RI					;Move the transmitter/reciever register into R1
-			STRB R1,[R2,#UART0_C2_OFFSET]			;Store UART0_C2 into R1
-RxEnqueue	LDRB R0,[R2,#UART0_S1_OFFSET]			;Load UART0_S1 into R0
-			MOVS R1,#UART0_S1_RDRF_MASK				;Load RDRF Mask into R1
-			ANDS R0,R0,R1							;AND R0 and R1 into the S1
-			BEQ EndUART0ISR							;Branch if equal to EndUART0ISR
+			LDR R2,=UART0_BASE					;Load UART0_BASE into R2
+			LDRB R0,[R2,#UART0_C2_OFFSET]		;Load UART0_C2 into R0
+			MOVS R1,#UART0_C2_TIE_MASK			;Move C2_TIE_MASK into R1
+			ANDS R0,R0,R1						;AND R0 and R1 into C2
+			BEQ RxEnqueue						;If ANDS returns a 1, then branch to RxEnqueue
+TxInterrupt LDRB R0,[R2,#UART0_S1_OFFSET]		;Load UART0_S1 into R0
+			MOVS R1,#UART0_S1_TDRE_MASK			;Move TDRE_MASK into R1
+			ANDS R0,R0,R1						;AND R0 and R1 into S1
+			BEQ RxEnqueue						;If ANDS returns a 1, then branch to RxEnqueue
+			LDR R1,=TxQRecord					;Load the Transmit Queue into R1
+			BL Dequeue							;Dequeue a character
+			BCS DisableTxI						;Branch if dequeue was unsuccessful 
+			STRB R0,[R2,#UART0_D_OFFSET]		;Store the character dequeued into UART0_D
+			B RxEnqueue							;Branch to RxEnqueue 
+DisableTxI	MOVS R1,#UART0_C2_T_RI				;Move the transmitter/reciever register into R1
+			STRB R1,[R2,#UART0_C2_OFFSET]		;Store UART0_C2 into R1
+RxEnqueue	LDRB R0,[R2,#UART0_S1_OFFSET]		;Load UART0_S1 into R0
+			MOVS R1,#UART0_S1_RDRF_MASK			;Load RDRF Mask into R1
+			ANDS R0,R0,R1						;AND R0 and R1 into the S1
+			BEQ EndUART0ISR						;Branch if equal to EndUART0ISR
 			LDRB R0,[R2,#UART0_D_OFFSET]
-			LDR R1,=RxQRecord						;Load Receive Queue Record into R1
-			BL Enqueue								;Enqueue a character	
+			LDR R1,=RxQRecord					;Load Receive Queue Record into R1
+			BL Enqueue							;Enqueue a character	
 			
-EndUART0ISR	CPSIE I									;Unmask all interrupts	
-			POP {PC}								;Pop the saved registers
+EndUART0ISR	CPSIE I								;Unmask all interrupts	
+			POP {PC}							;Pop the saved registers
 			
 			ENDP
 												;End the process
 ;-------------------------------------------------------------
 Init_UART0_IRQ		PROC {R0-R13},{}
 ;Interrupt Service Routine for Interrupt Request
-			CPSID I														;Mask all interrupts
-			PUSH {R0-R7,LR}												;Push registers into stack
-			LDR R0,=RxQBuffer											;Load into R0 the Receive Queue Buffer
-			LDR R1,=RxQRecord											;Load into R1 the Recieve Queue Record
-			MOVS R2,#Q_BUF_SZ											;Load Q_BUF_SZ into R2
-			BL InitQueue		  										;Initialize RxQueue			
-			LDR R0,=TxQBuffer											;Load into R0 the Transmit Queue Buffer
-			LDR R1,=TxQRecord											;Load into R1 the Transmit Queue Buffer
-			BL InitQueue		  										;Initialize TxQueue
+			CPSID I										;Mask all interrupts
+			PUSH {R0-R7,LR}								;Push registers into stack
+			LDR R0,=RxQBuffer							;Load into R0 the Receive Queue Buffer
+			LDR R1,=RxQRecord							;Load into R1 the Recieve Queue Record
+			MOVS R2,#Q_BUF_SZ							;Load Q_BUF_SZ into R2
+			BL InitQueue		  						;Initialize RxQueue			
+			LDR R0,=TxQBuffer							;Load into R0 the Transmit Queue Buffer
+			LDR R1,=TxQRecord							;Load into R1 the Transmit Queue Buffer
+			BL InitQueue		  						;Initialize TxQueue
 ;Select MCGPLLCLK / 2 UART0 clock source
-			LDR	R0,=SIM_SOPT2											;Load SIM_SOPT2's memory address into R0
-			LDR R1,=SIM_SOPT2_UART0SRC_MASK								;Load SIM_SOPT2_UART0SRC_MASK into R1
-			LDR R2,[R0,#0]												;Load SIM_SOPT2's value into R2
-			BICS R2,R2,R1												;Bit Clear (R2 = R2 & ~R1)
-			LDR R1,=SIM_SOPT2_UART0_MCGPLLCLK_DIV2						;Load R2 with SIM_SOPT2_UART0_MCGPLLK_DIV2's memory address
-			ORRS R2,R2,R1												;Or R2 and R1 together to make R2
-			STR R2,[R0,#0]												;Store R2 in R0's effective memory address
+			LDR	R0,=SIM_SOPT2							;Load SIM_SOPT2's memory address into R0
+			LDR R1,=SIM_SOPT2_UART0SRC_MASK				;Load SIM_SOPT2_UART0SRC_MASK into R1
+			LDR R2,[R0,#0]								;Load SIM_SOPT2's value into R2
+			BICS R2,R2,R1								;Bit Clear (R2 = R2 & ~R1)
+			LDR R1,=SIM_SOPT2_UART0_MCGPLLCLK_DIV2		;Load R2 with SIM_SOPT2_UART0_MCGPLLK_DIV2's memory address
+			ORRS R2,R2,R1								;Or R2 and R1 together to make R2
+			STR R2,[R0,#0]								;Store R2 in R0's effective memory address
 ;Enable external connection for UART0
-			LDR R0,=SIM_SOPT5											;Store SIM_SOPT5's memory address into R0
-			LDR R1,=SIM_SOPT5_UART0_EXTERN_MASK_CLEAR					;Store SIM_SOPT5_UART0_EXTERN_MASK's memory address into R1
-			LDR R2,[R0,#0]												;Load R0's value into R2
-			BICS R2,R2,R1												;Bit Clear (R2 = R2 & ~R1)
-			STR R2,[R0,#0]												;Store R2 in R0's effective memory address
+			LDR R0,=SIM_SOPT5							;Store SIM_SOPT5's memory address into R0
+			LDR R1,=SIM_SOPT5_UART0_EXTERN_MASK_CLEAR	;Store SIM_SOPT5_UART0_EXTERN_MASK's memory address into R1
+			LDR R2,[R0,#0]								;Load R0's value into R2
+			BICS R2,R2,R1								;Bit Clear (R2 = R2 & ~R1)
+			STR R2,[R0,#0]								;Store R2 in R0's effective memory address
 ;Enable clock for UART0 module 
-			LDR R0,=SIM_SCGC4											;Load SIM_SCGC4's memory address in R0
-			LDR R1,=SIM_SCGC4_UART0_MASK								;Store SIM_SCGC4's_UART0_MASK's memory address into R1
-			LDR R2,[R0,#0]												;Load R0's value into R2
-			ORRS R2,R2,R1												;Or (R2 = R2 | R1)
-			STR R2,[R0,#0]												;Store R2 in R0's effective memory address
+			LDR R0,=SIM_SCGC4							;Load SIM_SCGC4's memory address in R0
+			LDR R1,=SIM_SCGC4_UART0_MASK				;Store SIM_SCGC4's_UART0_MASK's memory address into R1
+			LDR R2,[R0,#0]								;Load R0's value into R2
+			ORRS R2,R2,R1								;Or (R2 = R2 | R1)
+			STR R2,[R0,#0]								;Store R2 in R0's effective memory address
 ;Enable clock for Port A module 
-			LDR R0,=SIM_SCGC5											;Load SIM_SCGC5's memory address in R0
-			LDR R1,=SIM_SCGC5_PORTA_MASK								;Load SIM_SCGCS5_PORTA_MASK's address in R1
-			LDR R2,[R0,#0]												;Load R0's value in R2
-			ORRS R2,R2,R1												;Or (R2 = R2 | R1)
-			STR R2,[R0,#0]												;Store R2 in R0's memory address
+			LDR R0,=SIM_SCGC5							;Load SIM_SCGC5's memory address in R0
+			LDR R1,=SIM_SCGC5_PORTA_MASK				;Load SIM_SCGCS5_PORTA_MASK's address in R1
+			LDR R2,[R0,#0]								;Load R0's value in R2
+			ORRS R2,R2,R1								;Or (R2 = R2 | R1)
+			STR R2,[R0,#0]								;Store R2 in R0's memory address
 ;Connect PORT A Pin 1 (PTA1) to UART0 Rx (J1 Pin 02)
-			LDR R0,=PORTA_PCR1											;Load PORTA_PCR1's memory address in R0
-			LDR R1,=PORT_PCR_SET_PTA1_UART0_RX							;Load PORT_PCR_SET_PTA1_UART0_RX's memory address in R1
-			STR R1,[R0,#0]												;Store R1 in R0's effective memory address
+			LDR R0,=PORTA_PCR1							;Load PORTA_PCR1's memory address in R0
+			LDR R1,=PORT_PCR_SET_PTA1_UART0_RX			;Load PORT_PCR_SET_PTA1_UART0_RX's memory address in R1
+			STR R1,[R0,#0]								;Store R1 in R0's effective memory address
 ;Connect PORT A Pin 2 (PTA2) to UART0 Tx (J1 Pin 04)
-			LDR R0,=PORTA_PCR2											;Load PORTA_PCR2's memory address in R0
-			LDR R1,=PORT_PCR_SET_PTA2_UART0_TX							;Load PORT_PCR_SET_PTA1_UART0_RX's memory address in R1
-			STR R1,[R0,#0]												;Load R1 in R0's effective memory address
+			LDR R0,=PORTA_PCR2							;Load PORTA_PCR2's memory address in R0
+			LDR R1,=PORT_PCR_SET_PTA2_UART0_TX			;Load PORT_PCR_SET_PTA1_UART0_RX's memory address in R1
+			STR R1,[R0,#0]								;Load R1 in R0's effective memory address
 ;Load base address for UART0
-			LDR R0,=UART0_BASE											;Load UART0_BASE address in R0
+			LDR R0,=UART0_BASE							;Load UART0_BASE address in R0
 ;Disable UART0
-			MOVS R1,#UART0_C2_T_R										;Move UART0_C2_T_R address into R1
-			LDRB R2,[R0,#UART0_C2_OFFSET]								;Load R0's Byte value into R2
-			BICS R2,R2,R1												;Bit Clear (R2 = R2 & R1)
+			MOVS R1,#UART0_C2_T_R						;Move UART0_C2_T_R address into R1
+			LDRB R2,[R0,#UART0_C2_OFFSET]				;Load R0's Byte value into R2
+			BICS R2,R2,R1								;Bit Clear (R2 = R2 & R1)
 			STRB R2,[R0,#UART0_C2_OFFSET]
 ;Initialize NVIC for UART0 interrupts
 ;Set UART0 IRQ priority 
-			LDR R0,=UART0_IPR											;Load UART0_IPR into R0
+			LDR R0,=UART0_IPR							;Load UART0_IPR into R0
 			;LDR R1,=NVIC_IPR_UART0_MASK
-			LDR R2,=NVIC_IPR_UART0_PRI_3								;Set a low priority into R2
-			LDR R3,[R0,#0]												;Load IPR into R3
+			LDR R2,=NVIC_IPR_UART0_PRI_3				;Set a low priority into R2
+			LDR R3,[R0,#0]								;Load IPR into R3
 			;BICS R3,R3,R1
-			ORRS R3,R3,R2												;Set the PRIORITY to 3
-			STR R3,[R0,#0]												;Store priority into IPR
+			ORRS R3,R3,R2								;Set the PRIORITY to 3
+			STR R3,[R0,#0]								;Store priority into IPR
 ;Clear any pending UART0 interrupts
-			LDR R0,=NVIC_ICPR											;Load ICPR into R0
-			LDR R1,=NVIC_ICPR_UART0_MASK								;Load MASK into R1
-			STR R1,[R0,#0]												;Store the UART0 into ICPR
+			LDR R0,=NVIC_ICPR							;Load ICPR into R0
+			LDR R1,=NVIC_ICPR_UART0_MASK				;Load MASK into R1
+			STR R1,[R0,#0]								;Store the UART0 into ICPR
 ;Unmask UART0 interrupts
-			LDR R0,=NVIC_ISER											;Load ISER into R0
-			LDR R1,=NVIC_ISER_UART0_MASK								;Load MASK into R1
-			STR R1,[R0,#0]												;Store the UART0 into ISEr
+			LDR R0,=NVIC_ISER							;Load ISER into R0
+			LDR R1,=NVIC_ISER_UART0_MASK				;Load MASK into R1
+			STR R1,[R0,#0]								;Store the UART0 into ISEr
 ;Initialize UART0 for 8N1 format at 9600 baud, and enable recieve interrupt
 ;Set UART baud rate-BDH before BDL
 			LDR R0,=UART0_BASE
-			MOVS R1,#UART0_BDH_9600										;Move UART0_BDH_9600 into R1
-			STRB R1,[R0,#UART0_BDH_OFFSET]								;Store R1's address in R0's effective memory address based on offset
-			MOVS R1,#UART0_BDL_9600										;Move UART_BDL_9600 into R1
-			STRB R1,[R0,#UART0_BDL_OFFSET]								;Store R1's address in R0's effective memory address based on offset
+			MOVS R1,#UART0_BDH_9600				;Move UART0_BDH_9600 into R1
+			STRB R1,[R0,#UART0_BDH_OFFSET]		;Store R1's address in R0's effective memory address based on offset
+			MOVS R1,#UART0_BDL_9600				;Move UART_BDL_9600 into R1
+			STRB R1,[R0,#UART0_BDL_OFFSET]		;Store R1's address in R0's effective memory address based on offset
 ;Set UART0 character format for serial bit stream and clear flag
-			MOVS R1,#UART0_C1_8N1										;Move UART0_C1_8N1 into R1
-			STRB R1,[R0,#UART0_C1_OFFSET]								;Store R1's address in R0's effective memory address based on offset
-			MOVS R1,#UART0_C3_NO_TXINV									;Move UART0_C3_NO_TXNIV into R1
-			STRB R1,[R0,#UART_C3_OFFSET]                                ;Store R1 in effective memory address of R0
-			MOVS R1,#UART0_C4_NO_MATCH_OSR_16                           ;Move UART0_C4_NO_MATCH_OSR_16 into R1
-			STRB R1,[R0,#UART0_C4_OFFSET]                               ;Store R1 in effective memory address of R0
-			MOVS R1,#UART0_C5_NO_DMA_SSR_SYNC							;Move UART0_C5 into R1
-			STRB R1,[R0,#UART0_C5_OFFSET]								;Store R1 in effective memory address of R0
-			MOVS R1,#UART0_S1_CLEAR_FLAGS								;Move UART0_S1 in R1
-			STRB R1,[R0,#UART0_S1_OFFSET]								;Store R1 in effective memory address of R0
+			MOVS R1,#UART0_C1_8N1				;Move UART0_C1_8N1 into R1
+			STRB R1,[R0,#UART0_C1_OFFSET]		;Store R1's address in R0's effective memory address based on offset
+			MOVS R1,#UART0_C3_NO_TXINV			;Move UART0_C3_NO_TXNIV into R1
+			STRB R1,[R0,#UART_C3_OFFSET]        ;Store R1 in effective memory address of R0
+			MOVS R1,#UART0_C4_NO_MATCH_OSR_16   ;Move UART0_C4_NO_MATCH_OSR_16 into R1
+			STRB R1,[R0,#UART0_C4_OFFSET]       ;Store R1 in effective memory address of R0
+			MOVS R1,#UART0_C5_NO_DMA_SSR_SYNC	;Move UART0_C5 into R1
+			STRB R1,[R0,#UART0_C5_OFFSET]		;Store R1 in effective memory address of R0
+			MOVS R1,#UART0_S1_CLEAR_FLAGS		;Move UART0_S1 in R1
+			STRB R1,[R0,#UART0_S1_OFFSET]		;Store R1 in effective memory address of R0
 			MOVS R1,#UART0_S2_NO_RXINV_BRK10_NO_LBKDETECT_CLEAR_FLAGS	;Move UART0_S2 in R1	
-			STRB R1,[R0,#UART0_S2_OFFSET]								;Store R1 in effective memory address of R0
+			STRB R1,[R0,#UART0_S2_OFFSET]	;Store R1 in effective memory address of R0
 ;Enable UART0
 			LDR R0,=UART0_BASE
-			MOVS R1,#UART0_C2_T_RI										;Move UART0_C2 in R1
-			STRB R1,[R0,#UART0_C2_OFFSET]								;Store R1 into UART0_C2
-			POP {R0-R7,PC}												;Pop saved registers
-			CPSIE I														;Unmask all interrupts
-			ENDP														;End the process
+			MOVS R1,#UART0_C2_T_RI			;Move UART0_C2 in R1
+			STRB R1,[R0,#UART0_C2_OFFSET]	;Store R1 into UART0_C2
+			POP {R0-R7,PC}					;Pop saved registers
+			CPSIE I							;Unmask all interrupts
+			ENDP							;End the process
 ;------------------------------------------------------------------------
 Init_UART0_Polling	PROC {R0-R13},{}
 ;Select and enable clock for Port A module
 ;to initialize UART0 module along with 
 ;KL46 FRDM Board
 
-			PUSH {R0-R7}												; I push R0 through R13 to store these values so they are not changed
+			PUSH {R0-R7}									; I push R0 through R13 to store these values so they are not changed
 		;Select MCGPLLCLK / 2 UART0 clock source
-			LDR	R0,=SIM_SOPT2											; Load SIM_SOPT2's memory address into R0
-			LDR R1,=SIM_SOPT2_UART0SRC_MASK								; Load SIM_SOPT2_UART0SRC_MASK into R1
-			LDR R2,[R0,#0]												; Load SIM_SOPT2's value into R2
-			BICS R2,R2,R1												; Bit Clear (R2 = R2 & ~R1)
-			LDR R1,=SIM_SOPT2_UART0_MCGPLLCLK_DIV2						; Load R2 with SIM_SOPT2_UART0_MCGPLLK_DIV2's memory address
-			ORRS R2,R2,R1												; Or R2 and R1 together to make R2
-			STR R2,[R0,#0]												; Store R2 in R0's effective memory address
+			LDR	R0,=SIM_SOPT2								; Load SIM_SOPT2's memory address into R0
+			LDR R1,=SIM_SOPT2_UART0SRC_MASK					; Load SIM_SOPT2_UART0SRC_MASK into R1
+			LDR R2,[R0,#0]									; Load SIM_SOPT2's value into R2
+			BICS R2,R2,R1									; Bit Clear (R2 = R2 & ~R1)
+			LDR R1,=SIM_SOPT2_UART0_MCGPLLCLK_DIV2			; Load R2 with SIM_SOPT2_UART0_MCGPLLK_DIV2's memory address
+			ORRS R2,R2,R1									; Or R2 and R1 together to make R2
+			STR R2,[R0,#0]									; Store R2 in R0's effective memory address
 		;Enable external connection for UART0
-			LDR R0,=SIM_SOPT5											; Store SIM_SOPT5's memory address into R0
-			LDR R1,=SIM_SOPT5_UART0_EXTERN_MASK_CLEAR					; Store SIM_SOPT5_UART0_EXTERN_MASK's memory address into R1
-			LDR R2,[R0,#0]												; Load R0's value into R2
-			BICS R2,R2,R1												; Bit Clear (R2 = R2 & ~R1)
-			STR R2,[R0,#0]												; Store R2 in R0's effective memory address
+			LDR R0,=SIM_SOPT5								; Store SIM_SOPT5's memory address into R0
+			LDR R1,=SIM_SOPT5_UART0_EXTERN_MASK_CLEAR		; Store SIM_SOPT5_UART0_EXTERN_MASK's memory address into R1
+			LDR R2,[R0,#0]									; Load R0's value into R2
+			BICS R2,R2,R1									; Bit Clear (R2 = R2 & ~R1)
+			STR R2,[R0,#0]									; Store R2 in R0's effective memory address
 		;Enable clock for UART0 module 
-			LDR R0,=SIM_SCGC4											; Load SIM_SCGC4's memory address in R0
-			LDR R1,=SIM_SCGC4_UART0_MASK								; Store SIM_SCGC4's_UART0_MASK's memory address into R1
-			LDR R2,[R0,#0]												; Load R0's value into R2
-			ORRS R2,R2,R1												; Or (R2 = R2 | R1)
-			STR R2,[R0,#0]												; Store R2 in R0's effective memory address
+			LDR R0,=SIM_SCGC4								; Load SIM_SCGC4's memory address in R0
+			LDR R1,=SIM_SCGC4_UART0_MASK					; Store SIM_SCGC4's_UART0_MASK's memory address into R1
+			LDR R2,[R0,#0]									; Load R0's value into R2
+			ORRS R2,R2,R1									; Or (R2 = R2 | R1)
+			STR R2,[R0,#0]									; Store R2 in R0's effective memory address
 		;Enable clock for Port A module 
-			LDR R0,=SIM_SCGC5											; Load SIM_SCGC5's memory address in R0
-			LDR R1,=SIM_SCGC5_PORTA_MASK								; Load SIM_SCGCS5_PORTA_MASK's address in R1
-			LDR R2,[R0,#0]												; Load R0's value in R2
-			ORRS R2,R2,R1												; Or (R2 = R2 | R1)
-			STR R2,[R0,#0]												; Store R2 in R0's memory address
+			LDR R0,=SIM_SCGC5								; Load SIM_SCGC5's memory address in R0
+			LDR R1,=SIM_SCGC5_PORTA_MASK					; Load SIM_SCGCS5_PORTA_MASK's address in R1
+			LDR R2,[R0,#0]									; Load R0's value in R2
+			ORRS R2,R2,R1									; Or (R2 = R2 | R1)
+			STR R2,[R0,#0]									; Store R2 in R0's memory address
 		;Connect PORT A Pin 1 (PTA1) to UART0 Rx (J1 Pin 02)
-			LDR R0,=PORTA_PCR1											; Load PORTA_PCR1's memory address in R0
-			LDR R1,=PORT_PCR_SET_PTA1_UART0_RX							; Load PORT_PCR_SET_PTA1_UART0_RX's memory address in R1
-			STR R1,[R0,#0]												; Store R1 in R0's effective memory address
+			LDR R0,=PORTA_PCR1								; Load PORTA_PCR1's memory address in R0
+			LDR R1,=PORT_PCR_SET_PTA1_UART0_RX				; Load PORT_PCR_SET_PTA1_UART0_RX's memory address in R1
+			STR R1,[R0,#0]									; Store R1 in R0's effective memory address
 		;Connect PORT A Pin 2 (PTA2) to UART0 Tx (J1 Pin 04)
-			LDR R0,=PORTA_PCR2											; Load PORTA_PCR2's memory address in R0
-			LDR R1,=PORT_PCR_SET_PTA2_UART0_TX							; Load PORT_PCR_SET_PTA1_UART0_RX's memory address in R1
-			STR R1,[R0,#0]												; Load R1 in R0's effective memory address
+			LDR R0,=PORTA_PCR2								; Load PORTA_PCR2's memory address in R0
+			LDR R1,=PORT_PCR_SET_PTA2_UART0_TX				; Load PORT_PCR_SET_PTA1_UART0_RX's memory address in R1
+			STR R1,[R0,#0]									; Load R1 in R0's effective memory address
 		;Load base address for UART0
-			LDR R0,=UART0_BASE											; Load UART0_BASE address in R0
+			LDR R0,=UART0_BASE								; Load UART0_BASE address in R0
 		;Disable UART0
-			MOVS R1,#UART0_C2_T_R										; Move UART0_C2_T_R address into R1
-			LDRB R2,[R0,#UART0_C2_OFFSET]								; Load R0's Byte value into R2
-			BICS R2,R2,R1												; Bit Clear (R2 = R2 & R1)
-			STRB R2,[R0,#UART0_C2_OFFSET]								; Store R2's address in R0's effective memory address based on offset
+			MOVS R1,#UART0_C2_T_R							; Move UART0_C2_T_R address into R1
+			LDRB R2,[R0,#UART0_C2_OFFSET]					; Load R0's Byte value into R2
+			BICS R2,R2,R1									; Bit Clear (R2 = R2 & R1)
+			STRB R2,[R0,#UART0_C2_OFFSET]					; Store R2's address in R0's effective memory address based on offset
 		;Set UART baud rate-BDH before BDL
-			MOVS R1,#UART0_BDH_9600										; Move UART0_BDH_9600 into R1
-			STRB R1,[R0,#UART0_BDH_OFFSET]								; Store R1's address in R0's effective memory address based on offset
-			MOVS R1,#UART0_BDL_9600										; Move UART_BDL_9600 into R1
-			STRB R1,[R0,#UART0_BDL_OFFSET]								; Store R1's address in R0's effective memory address based on offset
-		;Set UART0 character format for serial bit stream and clear flag
-			MOVS R1,#UART0_C1_8N1										; Move UART0_C1_8N1 into R1
-			STRB R1,[R0,#UART0_C1_OFFSET]								; Store R1's address in R0's effective memory address based on offset
-			MOVS R1,#UART0_C3_NO_TXINV									; Move UART0_C3_NO_TXNIV into R1
-			STRB R1,[R0,#UART_C3_OFFSET]                                ; Store R1 in effective memory address of R0
-			MOVS R1,#UART0_C4_NO_MATCH_OSR_16                           ; Move UART0_C4_NO_MATCH_OSR_16 into R1
-			STRB R1,[R0,#UART0_C4_OFFSET]                               ; Store R1 in effective memory address of R0
-			MOVS R1,#UART0_C5_NO_DMA_SSR_SYNC							; Move UART0_C5 into R1
-			STRB R1,[R0,#UART0_C5_OFFSET]								; Store R1 in effective memory address of R0
-			MOVS R1,#UART0_S1_CLEAR_FLAGS								; Move UART0_S1 in R1
-			STRB R1,[R0,#UART0_S1_OFFSET]								; Store R1 in effective memory address of R0
-			MOVS R1,#UART0_S2_NO_RXINV_BRK10_NO_LBKDETECT_CLEAR_FLAGS	; Move UART0_S2 in R1	
-			STRB R1,[R0,#UART0_S2_OFFSET]								; Store R1 in effective memory address of R0
+			MOVS R1,#UART0_BDH_9600							; Move UART0_BDH_9600 into R1
+			STRB R1,[R0,#UART0_BDH_OFFSET]					; Store R1's address in R0's effective memory address based on offset
+			MOVS R1,#UART0_BDL_9600							; Move UART_BDL_9600 into R1
+			STRB R1,[R0,#UART0_BDL_OFFSET]					; Store R1's address in R0's effective memory address based on offset
+		;Set UART0 character format for serial bit stream
+			MOVS R1,#UART0_C1_8N1							; Move UART0_C1_8N1 into R1
+			STRB R1,[R0,#UART0_C1_OFFSET]					; Store R1's address in R0's effective memory address based on offset
+			MOVS R1,#UART0_C3_NO_TXINV						; Move UART0_C3_NO_TXNIV into R1
+			STRB R1,[R0,#UART_C3_OFFSET]                             ; Store R1 in effective memory address of R0
+			MOVS R1,#UART0_C4_NO_MATCH_OSR_16                        ; Move UART0_C4_NO_MATCH_OSR_16 into R1
+			STRB R1,[R0,#UART0_C4_OFFSET]                            ; Store R1 in effective memory address of R0
+			MOVS R1,#UART0_C5_NO_DMA_SSR_SYNC				; Move UART0_C5 into R1
+			STRB R1,[R0,#UART0_C5_OFFSET]					; Store R1 in effective memory address of R0
+			MOVS R1,#UART0_S1_CLEAR_FLAGS					; Move UART0_S1 in R1
+			STRB R1,[R0,#UART0_S1_OFFSET]					; Store R1 in effective memory address of R0
+			MOVS R1,#UART0_S2_NO_RXINV_BRK10_NO_LBKDETECT_CLEAR_FLAGS; Move UART0_S2 in R1	
+			STRB R1,[R0,#UART0_S2_OFFSET]							; Store R1 in effective memory address of R0
 		;Enable UART0
-			MOVS R1,#UART0_C2_T_R										; Move UART0_C2 in R1
-			STRB R1,[R0,#UART0_C2_OFFSET]								; Store R1 in effective memory address in R0
+			MOVS R1,#UART0_C2_T_R									; Move UART0_C2 in R1
+			STRB R1,[R0,#UART0_C2_OFFSET]							; Store R1 in effective memory address in R0
 		;End Process 
-			POP {R0-R7}													; Pop saved registers
-			BX LR														; Branch Exchange to Link Register
-			ENDP														; End Process
+			POP {R0-R7}												; Pop saved registers
+			BX LR													; Branch Exchange to Link Register
+			ENDP													; End Process
 ;------------------------------------------------
 GetChar		PROC {R0-R13},{}
 ;GetChar is a subroutine that send characters 
 ;when the RDRF bit = 1
 ;This subroutine will continously loop until
 ;RDRF = 1
-			PUSH {R1-R7}												; Push these registers to save them
+			PUSH {R1-R7}						; Push these registers to save them
 		;Poll RDRF until UART0 ready to transmit
-			LDR R1,=UART0_BASE											; Load UART0_BASE into R1
-			MOVS R2,#UART0_S1_RDRF_MASK									; load S1 mask to set RDRF bit
-RDRF		LDRB R3,[R1,#UART0_S1_OFFSET]								; Load R3 in offset of R2
-			ANDS R3,R3,R2												; And R3 and R2 to set RDRF bit
-			BEQ RDRF													; Once RDRF is 
+			LDR R1,=UART0_BASE					; Load UART0_BASE into R1
+			MOVS R2,#UART0_S1_RDRF_MASK			; load S1 mask to set RDRF bit
+RDRF		LDRB R3,[R1,#UART0_S1_OFFSET]		; Load R3 in offset of R2
+			ANDS R3,R3,R2						; And R3 and R2 to set RDRF bit
+			BEQ RDRF							; Once RDRF is 
 		;Recieve character and store in R0
-			LDRB R0,[R1,#UART0_D_OFFSET]								; Load and read the character
+			LDRB R0,[R1,#UART0_D_OFFSET]		; Load and read the character
 		;End Process
-			POP {R1-R7}													; Pop saved registers
-			BX LR														; Branch exhange back to main program code
-			ENDP														; End process
+			POP {R1-R7}							; Pop saved registers
+			BX LR								; Branch exhange back to main program code
+			ENDP								; End process
 ;--------------------------------------------------				
 PutChar		PROC {R0-R13},{}				
 ;PutChar is a subroutine that send characters 
 ;when the TDRE bit = 1
 ;This subroutine will continously loop until
 ;TDRE = 1
-			PUSH {R1-R7}												; Push registers that I want to save		
-			LDR R1,=UART0_BASE											; Load UART0 into R1
-			MOVS R2,#UART0_S1_TDRE_MASK									; Move S1 mask to set in TDRE bit
-TDRE		LDRB R3,[R1,#UART0_S1_OFFSET]								; Load R3 in offset of R2
-			ANDS R3,R3,R2												; And R3 and R2 to set TDRE bit
-			BEQ TDRE													; Once TDRE bit is set, exit loop
+			PUSH {R1-R7}					;Push registers that I want to save		
+			LDR R1,=UART0_BASE				;Load UART0 into R1
+			MOVS R2,#UART0_S1_TDRE_MASK		;Move S1 mask to set in TDRE bit
+TDRE		LDRB R3,[R1,#UART0_S1_OFFSET]	;Load R3 in offset of R2
+			ANDS R3,R3,R2					;And R3 and R2 to set TDRE bit
+			BEQ TDRE						;Once TDRE bit is set, exit loop
 		;Recieve character and store in R0
-			STRB R0,[R1,#UART0_D_OFFSET]								; Store character for transmission
+			STRB R0,[R1,#UART0_D_OFFSET]	;Store character for transmission
 		;End Process
-			POP {R1-R7}													; Pop saved registers
-			BX LR														; Branch back to main code
-			ENDP														; End process
+			POP {R1-R7}						;Pop saved registers
+			BX LR							;Branch back to main code
+			ENDP							;End process
 ;------------------------------------------------
 GetCharINT		PROC {R0-R13},{}
 ;GetChar is a subroutine that send characters 
@@ -674,46 +674,46 @@ GetStringSB PROC {R0-R13},{}
 ;R2 = This Reg. gets R0's contents before calling GetChar, which will overwrite R0
 ;R3 = Pointer
 
-            PUSH {R0-R3,LR} 		;Push Saved Registers
+            PUSH {R0-R3,LR} 	;Push Saved Registers
 			
-            MOV R2,R0               ;Move R0's contents into R2 before calloing GetChar, which will overwrite R0's contents
-            MOVS R3,#0              ;Initialize counter R3 with 0
-			SUBS R1,R1,#1			;Decrement the MAX_STRING value by one to account for the null character
-While   	BL GetCharINT             ;Call GetChar to get the character from the user input
-			CMP R0,#0x0D            ;Compare input to carriage return to see if it has reached character return
-            BEQ NullTerminate		;Branch to null terminate if the character recieved was a carriage return
-			CMP R0,#0x1F			;Compare input to special keys
-			BLO While				;If the input is less than 0x1F, then ignore the character and branch back to while
-			CMP R0,#0x7F			;Compare input to delete
-			BEQ IgnoreBack			;If the input is 0x07F, then branch to IgnoreBack, which null terminates the character
-			BL PutCharINT				;Display the character on the terminal
-			STRB R0,[R2,R3]			;Store the character into the String's memory address in R2, with an offset of R3
-			ADDS R3,R3,#1			;Increment counter to go to next index of the string
-			CMP R3,R1         		;Compare my counter to the max string size
-			BLO While				;If counter < max_string, continue looping and taking in character
-While2   	BL GetCharINT              ;If counter >= max_string, take in another character
-			CMP R0,#0x0D            ;Compare input to carriage return to see if it has reached carriage return
-            BEQ NullTerminate		;If input was equal to carriage return, then branch to NullTerminate 
-			B While2				;If not equal to carriage return, then branch to While2
+            MOV R2,R0           ;Move R0's contents into R2 before calloing GetChar, which will overwrite R0's contents
+            MOVS R3,#0          ;Initialize counter R3 with 0
+			SUBS R1,R1,#1		;Decrement the MAX_STRING value by one to account for the null character
+While   	BL GetCharINT       ;Call GetChar to get the character from the user input
+			CMP R0,#0x0D        ;Compare input to carriage return to see if it has reached character return
+            BEQ NullTerminate	;Branch to null terminate if the character recieved was a carriage return
+			CMP R0,#0x1F		;Compare input to special keys
+			BLO While			;If the input is less than 0x1F, then ignore the character and branch back to while
+			CMP R0,#0x7F		;Compare input to delete
+			BEQ IgnoreBack		;If the input is 0x07F, then branch to IgnoreBack, which null terminates the character
+			BL PutCharINT		;Display the character on the terminal
+			STRB R0,[R2,R3]		;Store the character into the String's memory address in R2, with an offset of R3
+			ADDS R3,R3,#1		;Increment counter to go to next index of the string
+			CMP R3,R1         	;Compare my counter to the max string size
+			BLO While			;If counter < max_string, continue looping and taking in character
+While2   	BL GetCharINT       ;If counter >= max_string, take in another character
+			CMP R0,#0x0D        ;Compare input to carriage return to see if it has reached carriage return
+            BEQ NullTerminate	;If input was equal to carriage return, then branch to NullTerminate 
+			B While2			;If not equal to carriage return, then branch to While2
 			
 			
-IgnoreBack  BL   PutCharINT			;If input != Carriage return, branch here and display the next character
-    		SUBS R3,R3,#1			;Decrement counter to go back and null a character
-			MOVS R0,#0           ;Move NULL(0) into R0
-            STRB R0,[R2,R3]         ;Store the null byte, R0, into the memory address of the string with and offset of R3		
-			B While					;Branch back to while to input another character
+IgnoreBack  BL   PutCharINT		;If input != Carriage return, branch here and display the next character
+    		SUBS R3,R3,#1		;Decrement counter to go back and null a character
+			MOVS R0,#0          ;Move NULL(0) into R0
+            STRB R0,[R2,R3]     ;Store the null byte, R0, into the memory address of the string with and offset of R3		
+			B While				;Branch back to while to input another character
 			
 						
-NullTerminate BL PutCharINT			;Display the carriage return on the terminal
-              MOVS R0,#0	        ;Null terminate the string
-              STRB R0,[R2,R3]       ;Store null terminated string in R2 with R3 offset
-              MOVS R0,#0x0A         ;Line Feed to upadate line
-			  BL PutCharINT			;Put the LF on the terminal
-			  B EndGetStringSB		;End the Loop
+NullTerminate BL PutCharINT		;Display the carriage return on the terminal
+              MOVS R0,#0	    ;Null terminate the string
+              STRB R0,[R2,R3]   ;Store null terminated string in R2 with R3 offset
+              MOVS R0,#0x0A     ;Line Feed to upadate line
+			  BL PutCharINT		;Put the LF on the terminal
+			  B EndGetStringSB	;End the Loop
 
-EndGetStringSB						;Label denoting end of the subroutine
-				POP {R0-R3,PC}        ;Pop saved registers
-				ENDP				  ;End Process
+EndGetStringSB					;Label denoting end of the subroutine
+				POP {R0-R3,PC}  ;Pop saved registers
+				ENDP			;End Process
 				
 ;--------------------------------------------------------
 PutStringSB PROC {R0-R13},{}
@@ -754,33 +754,33 @@ DIVU		PROC {R2-R14},{}		; Define Subroutine name 'DIVU' along with Registers tha
 ;R1: Dividend
 ;Outputs:
 ;R1 / R0 = R0 remainder R1
-;*********************************
-			PUSH {R2-R4}			; Push R2-R4 so that these values do not change during each loop
-;*********************************
-			MOVS R2,#0				; Move 0 into R2 to act as the quotient
-			CMP R0,#0				; Compare R0 and zero to see if they are equal, if so, the carry flag will be set
-			BEQ RaiseCarry			; If R0 = 0, then the code will branch off to the 'RaiseCarry' Label
-WhileDIVU	CMP R1,R0				; Beginning of while loop, in which the dividend and divisor are compared
-			BLT End1While			; If the Dividend (R1) < Divisor (R0), then the code will branch off to the EndWhile Label
-			SUBS R1,R1,R0			; Dividend = Dividend - Divisor
-			ADDS R2,R2,#1			; R2 is incremented by 1 to show how many times the divisor goes into the dividend
-			B 	WhileDIVU			; Branch back to the while loop after each iteration to show how many times the divisor goes into the dividend
+;*******************************
+			PUSH {R2-R4}		; Push R2-R4 so that these values do not change during each loop
+;*******************************
+			MOVS R2,#0			; Move 0 into R2 to act as the quotient
+			CMP R0,#0			; Compare R0 and zero to see if they are equal, if so, the carry flag will be set
+			BEQ RaiseCarry		; If R0 = 0, then the code will branch off to the 'RaiseCarry' Label
+WhileDIVU	CMP R1,R0			; Beginning of while loop, in which the dividend and divisor are compared
+			BLT End1While		; If the Dividend (R1) < Divisor (R0), then the code will branch off to the EndWhile Label
+			SUBS R1,R1,R0		; Dividend = Dividend - Divisor
+			ADDS R2,R2,#1		; R2 is incremented by 1 to show how many times the divisor goes into the dividend
+			B 	WhileDIVU		; Branch back to the while loop after each iteration to show how many times the divisor goes into the dividend
 
-RaiseCarry	MRS R3,APSR				; Move to special register from R3
-			LDR R4,=0x20000000		; Load R4 with 0x20000000 to set the carry flag without affecting other flags
-			ORRS R3,R3,R4			; R3 = R3 | R4, will set off the carry bit (20000000 | 00000000 = 20000000)
-			MSR APSR,R3				; Move to R3 from special register
-			B EndDIVU				; Branch back to the EndWhile Label to reset the flag and prepare for next inputs
+RaiseCarry	MRS R3,APSR			; Move to special register from R3
+			LDR R4,=0x20000000	; Load R4 with 0x20000000 to set the carry flag without affecting other flags
+			ORRS R3,R3,R4		; R3 = R3 | R4, will set off the carry bit (20000000 | 00000000 = 20000000)
+			MSR APSR,R3			; Move to R3 from special register
+			B EndDIVU			; Branch back to the EndWhile Label to reset the flag and prepare for next inputs
 			
-End1While	MOVS R0,R2				; Move the quotient (R2) to R0
-            MRS R3,APSR				; Move to special register from R3 
-			BICS R3,R3,R4			; Bit clear R3 and R4 to reset carry flag without changing the other flags
-			MSR APSR,R3				; Move to R3 from special register
-			POP{R2-R4}				; Pop R2-R4 to restore those saved values
-			BX LR					; Branch Exhange with Link Register	to branch back to the code where BL DIVU was called
-			ENDP					; End process
+End1While	MOVS R0,R2			; Move the quotient (R2) to R0
+            MRS R3,APSR			; Move to special register from R3 
+			BICS R3,R3,R4		; Bit clear R3 and R4 to reset carry flag without changing the other flags
+			MSR APSR,R3			; Move to R3 from special register
+			POP{R2-R4}			; Pop R2-R4 to restore those saved values
+			BX LR				; Branch Exhange with Link Register	to branch back to the code where BL DIVU was called
+			ENDP				; End process
 				
-EndDIVU		BX LR					; Branch Exchange with Link Regster to branch back to the code to since the result sets the C flag
+EndDIVU		BX LR				; Branch Exchange with Link Regster to branch back to the code to since the result sets the C flag
 ;---------------------------------------------------------------
 PutNumU		PROC {R0-R13},{}
 ;R0 = Unsigned Word Variable
@@ -929,66 +929,66 @@ PutNumHex   PROC {R0-R13},{}
 ;R0 = Unsigned word value to print in hex
 ;Modify:
 ;PSR (after return, nothing else)
-            PUSH {R0-R7,LR}				;Push registers to save onto stack, as well as link register
-			REV R4,R0					;Reverse all the bytes with an outer reverse and inner reverse
-			MOVS R5,#0					;Initialize counter to take 
-loopH		MOVS R1,#0xF0				;Move 0xF0 into R1 to act as initial mask
-			MOVS R2,R4					;Move R4 into R2 for AND cmd. to work
-			ANDS R2,R2,R1				;And R1 and R2 to isolate the first nibble of R0
-			LSRS R2,R2,#4				;Shift the answer right by 4 bits
-			MOVS R3,R2					;Move R2 into R3
-			CMP R3,#0x0A				;Compare R3 with 0xA to see if it's above 9
-			BHS MoreThanA				;Branch if higher than or equal to MoreThanA
-			B NotLetter					;If R3 < 0x0A, then it's not a letter value
-MoreThanA	CMP R3,#0x0F				;Compare R3 with 0xF to see if it's between 0xA and 0xF
-			BLS LessThanF				;If it is, branch to LessThanF
-LessThanF	ADDS R3,R3,#0x37			;Add 0x37 to R3 to get ASCII value
-			MOVS R0,R3					;Move R3 into R0 to act as PutChar's input
-			BL PutCharINT					;Call PutChar to display value
-			ADDS R5,R5,#1				;Increment counter
-			B Return1					;Do not compare against numbers, so branch to Return1
-NotLetter	CMP R3,#0x09				;Compare R3 against 0x9 to see if it's a number
-			BLS LessThan9				;If R3 < 0x9, then Branch to LessThan9
-			B Endloop					;If R3 > 0x9, then R3 is not a number
-LessThan9	CMP R3,#0x00				;Compare R3 against 0x0 to see it's in between 0 and 9
-			BHS MoreThan0				;If R3 > 0, then Branch to MoreThan0
-			B Endloop					;Branch to EndLoop
-MoreThan0	ADDS R3,R3,#0x30			;Add 0x30 to R3 to get the ASCII value			
-			MOVS R0,R3					;Move ASCII value into R0 to print it
-			BL PutCharINT					;Put the character on the terminal
-			ADDS R5,R5,#1				;Increment counter
-			B Return1					;Branch to Return1
-Return1		LSRS R1,R1,#4				;Shift 0xF0 to become 0x0F for new mask
-			MOVS R2,R4					;Move R4 into R2 to prepare for next 
-			ANDS R2,R2,R1				;And R4 and R1 again for the remaining nibble of the byte
-			MOVS R3,R2					;Move Anded result into R3
-			CMP R3,#0x0A				;Compare R3 against 0x0A to see if it's a letter
-			BHS MoreThanA2				;If R3 > 0x0A, it may be considered a letter
-			B NotLetter2				;If R3 < 0x0A, it is not a letter
-MoreThanA2	CMP R3,#0x0F				;Compare R3 against 0x0F to see if it's in range
-			BLS LessThanF2				;If R3 < 0x0F, it is a letter
-			B Endloop					;If R3 > 0x0F, it is not a hex letter
-LessThanF2	ADDS R3,R3,#0x37			;Add 37 to R3 to get ASCII value
-			MOVS R0,R3					;Move R3 into R0 as input for PutChar
-			BL PutCharINT					;Call PutChar subroutine
-			ADDS R5,R5,#1				;Increment counter
-			B Return2					;Return2 will move to Return2 to shift byte 
-NotLetter2	CMP R3,#0x09				;Compare R3 against 0x09 to see if it's a number
-			BLS LessThan9A				;If R3 < 0x09, it can be considered a number
-			B Endloop					;If R3 > 0x09, it is not a number
-LessThan9A	CMP R3,#0x00				;Compare R3 against 0 to see if is between 0 and 9
-			BHS MoreThan0A				;If R3 > 0x00, it's in the range
-			B Endloop					;If R3 < 0x00, it's out of range
-MoreThan0A	ADDS R3,R3,#0x30			;Add 0x30 to ASCII value
-			MOVS R0,R3					;Move R3 into R0 to print out the character
-			BL PutCharINT					;Display character on terminal
-			ADDS R5,R5,#1				;Increment counter
-			B Return2					;Branch to Return2
-Return2		LSRS R4,R4,#8				;Shift the word right by 8 bits to work on next byte
-			CMP R5,#8					;Compare R4 to zero to see if you have fully shifted all the bits
-			BNE loopH					;If not equal to zero, then loop again to get the hex value
-Endloop		POP {R0-R7,PC}				;Pop R0-R7, as well as PC
-			ENDP						;End the subroutine
+            PUSH {R0-R7,LR}	;Push registers to save onto stack, as well as link register
+			REV R4,R0		;Reverse all the bytes with an outer reverse and inner reverse
+			MOVS R5,#0		;Initialize counter to take 
+loopH		MOVS R1,#0xF0	;Move 0xF0 into R1 to act as initial mask
+			MOVS R2,R4		;Move R4 into R2 for AND cmd. to work
+			ANDS R2,R2,R1	;And R1 and R2 to isolate the first nibble of R0
+			LSRS R2,R2,#4	;Shift the answer right by 4 bits
+			MOVS R3,R2		;Move R2 into R3
+			CMP R3,#0x0A	;Compare R3 with 0xA to see if it's above 9
+			BHS MoreThanA	;Branch if higher than or equal to MoreThanA
+			B NotLetter		;If R3 < 0x0A, then it's not a letter value
+MoreThanA	CMP R3,#0x0F	;Compare R3 with 0xF to see if it's between 0xA and 0xF
+			BLS LessThanF	;If it is, branch to LessThanF
+LessThanF	ADDS R3,R3,#0x37;Add 0x37 to R3 to get ASCII value
+			MOVS R0,R3		;Move R3 into R0 to act as PutChar's input
+			BL PutCharINT		;Call PutChar to display value
+			ADDS R5,R5,#1	;Increment counter
+			B Return1		;Do not compare against numbers, so branch to Return1
+NotLetter	CMP R3,#0x09	;Compare R3 against 0x9 to see if it's a number
+			BLS LessThan9	;If R3 < 0x9, then Branch to LessThan9
+			B Endloop		;If R3 > 0x9, then R3 is not a number
+LessThan9	CMP R3,#0x00	;Compare R3 against 0x0 to see it's in between 0 and 9
+			BHS MoreThan0	;If R3 > 0, then Branch to MoreThan0
+			B Endloop		;Branch to EndLoop
+MoreThan0	ADDS R3,R3,#0x30;Add 0x30 to R3 to get the ASCII value			
+			MOVS R0,R3		;Move ASCII value into R0 to print it
+			BL PutCharINT		;Put the character on the terminal
+			ADDS R5,R5,#1	;Increment counter
+			B Return1		;Branch to Return1
+Return1		LSRS R1,R1,#4	;Shift 0xF0 to become 0x0F for new mask
+			MOVS R2,R4		;Move R4 into R2 to prepare for next 
+			ANDS R2,R2,R1	;And R4 and R1 again for the remaining nibble of the byte
+			MOVS R3,R2		;Move Anded result into R3
+			CMP R3,#0x0A	;Compare R3 against 0x0A to see if it's a letter
+			BHS MoreThanA2	;If R3 > 0x0A, it may be considered a letter
+			B NotLetter2	;If R3 < 0x0A, it is not a letter
+MoreThanA2	CMP R3,#0x0F	;Compare R3 against 0x0F to see if it's in range
+			BLS LessThanF2	;If R3 < 0x0F, it is a letter
+			B Endloop		;If R3 > 0x0F, it is not a hex letter
+LessThanF2	ADDS R3,R3,#0x37;Add 37 to R3 to get ASCII value
+			MOVS R0,R3		;Move R3 into R0 as input for PutChar
+			BL PutCharINT		;Call PutChar subroutine
+			ADDS R5,R5,#1	;Increment counter
+			B Return2		;Return2 will move to Return2 to shift byte 
+NotLetter2	CMP R3,#0x09	;Compare R3 against 0x09 to see if it's a number
+			BLS LessThan9A	;If R3 < 0x09, it can be considered a number
+			B Endloop		;If R3 > 0x09, it is not a number
+LessThan9A	CMP R3,#0x00	;Compare R3 against 0 to see if is between 0 and 9
+			BHS MoreThan0A	;If R3 > 0x00, it's in the range
+			B Endloop		;If R3 < 0x00, it's out of range
+MoreThan0A	ADDS R3,R3,#0x30;Add 0x30 to ASCII value
+			MOVS R0,R3		;Move R3 into R0 to print out the character
+			BL PutCharINT		;Display character on terminal
+			ADDS R5,R5,#1	;Increment counter
+			B Return2		;Branch to Return2
+Return2		LSRS R4,R4,#8	;Shift the word right by 8 bits to work on next byte
+			CMP R5,#8		;Compare R4 to zero to see if you have fully shifted all the bits
+			BNE loopH		;If not equal to zero, then loop again to get the hex value
+Endloop		POP {R0-R7,PC}	;Pop R0-R7, as well as PC
+			ENDP			;End the subroutine
 ;----------------------------------------------------------------
 PutNumUB	PROC {R0-R13},{}
 ;This subroutine prints to the terminal screen the text decimal 
@@ -1008,33 +1008,38 @@ DisplayChoices	PROC {R0-R13},{}
 ;Inputs: N/A
 ;Outputs:
 ;Displays the choices in R0
-			PUSH {R0-R1,LR}				;Push registers to modify into stack
-			MOVS R1,#MAX_STRING			;Set a buffer capacity
-			BL CRLF						;Enter Key
-			LDR R0,=DS					;Load Strongly Disagree choice
-			BL PutStringSB				;Display the choice
-			BL CRLF						;Enter Key
-			LDR R0,=DM					;Load Disagree moderately
-			BL PutStringSB				;Display the choice
-			BL CRLF						;Enter Key
-			LDR R0,=DL					;Load Disagree a little
-			BL PutStringSB				;Display the choice
-			BL CRLF						;Enter Key
-			LDR R0,=NAND				;Load neither agree nor disagree prompt
-			BL PutStringSB				;Display the choice
-			BL CRLF						;Enter Key
-			LDR R0,=AL					;Load agree a little prompt
-			BL PutStringSB				;Display the choice
-			BL CRLF						;Enter Key
-			LDR R0,=AM					;Load agree moderately choice
-			BL PutStringSB				;Display the choice
-			BL CRLF						;Enter Key
-			LDR R0,=AS					;Load agree strongly
-			BL CRLF						;Enter Key
-			POP {R0-R1,PC}				;Pop registers
-			ENDP						;End subroutine
+			PUSH {R0-R1,LR}		;Push registers to modify into stack
+			MOVS R1,#MAX_STRING	;Set a buffer capacity
+			BL CRLF				;Enter Key
+			LDR R0,=DS			;Load Strongly Disagree choice
+			BL PutStringSB		;Display the choice
+			BL CRLF				;Enter Key
+			LDR R0,=DM			;Load Disagree moderately
+			BL PutStringSB		;Display the choice
+			BL CRLF				;Enter Key
+			LDR R0,=DL			;Load Disagree a little
+			BL PutStringSB		;Display the choice
+			BL CRLF				;Enter Key
+			LDR R0,=NAND		;Load neither agree nor disagree prompt
+			BL PutStringSB		;Display the choice
+			BL CRLF				;Enter Key
+			LDR R0,=AL			;Load agree a little prompt
+			BL PutStringSB		;Display the choice
+			BL CRLF				;Enter Key
+			LDR R0,=AM			;Load agree moderately choice
+			BL PutStringSB		;Display the choice
+			BL CRLF				;Enter Key
+			LDR R0,=AS			;Load agree strongly
+			BL CRLF				;Enter Key
+			POP {R0-R1,PC}		;Pop registers
+			ENDP				;End subroutine
 ;-------------------------------------------------------------------
-
+CheckChoices	PROC {R0-R13},{}
+;Subroutine that checks the users choices
+;Inputs: R2 = Holds the answer that the user typed.
+;Outputs: Stores answer choice in memory
+				PUSH {R0-R2}	;Push registers to save onto stack
+				
 ;>>>>>   end subroutine code <<<<<
             ALIGN
 ;****************************************************************
