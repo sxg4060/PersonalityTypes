@@ -288,7 +288,7 @@ main
 			BL Init_UART0_IRQ		;Initialize UART0 for serial driver
 			CPSIE I					;Unmask interrupts from KL46 devices
 ;----------------------------------------------------------------
-MainLoop	
+			
 ;>>>>>   end main program code <<<<<
 ;Stay here
 EndIT		
@@ -1067,6 +1067,8 @@ __Vectors_Size  EQU     __Vectors_End - __Vectors
 ;Constants
             AREA    MyConst,DATA,READONLY
 ;>>>>> begin constants here <<<<<
+;Welcome Message
+Welcome DCB "Welcome to the personality test!",0
 ;Questions
 Q1	DCB		"I see myself as extraverted, enthusiatic.",0
 Q2	DCB		"I see myself as critical, quarrelsome.",0
@@ -1103,6 +1105,8 @@ ESFJ DCB "ESFJ - Consul",0
 ESTJ DCB "ESTJ - Executive",0
 ESTP DCB "ESTP - Entrepreneur",0
 ESFP DCB "ESFP - Entertainer",0
+;Goodbye Message
+Bye	 DCB "Thank you for taking the test! Goodbye now.",0
 ;>>>>>   end constants here <<<<<		
             ALIGN
 ;****************************************************************
