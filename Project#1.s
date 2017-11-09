@@ -1,4 +1,4 @@
-            TTL Project #1
+            TTL Personality Types
 ;****************************************************************
 ;Descriptive comment header goes here.
 ;This is my first formal project in assembly language.
@@ -288,13 +288,42 @@ main
 			BL Init_UART0_IRQ		;Initialize UART0 for serial driver
 			CPSIE I					;Unmask interrupts from KL46 devices
 ;----------------------------------------------------------------
+			MOVS R2,#0
 			LDR R0,=Welcome			;Load the welcome message into R0
 			MOVS R1,#MAX_STRING		;Load in a buffer capacity for the string
 			BL PutStringSB			;Display the welcome message on the terminal
 			BL CRLF					;Carriage Return and Line Feed (equivalent to hitting the enter key)
 			LDR R0,=Q1				;Load the first question into R0
 			BL PutStringSB			;Display the first question
-			
+			BL CRLF 				;Enter Key
+			BL DisplayChoices		;Display the choices for the user
+			LDR R1,=Choice			;Load in the memory address of Choice
+			BL GetCharINT			;Get a character from the user
+			BL CheckChoices			;Check to see if choice was valid and convert it
+			BL CRLF					;Carriage Return and Line Feed (equivalent to hitting the enter key)
+			LDR R0,=Q2				;Load the first question into R0
+			BL PutStringSB			;Display the first question
+			BL CRLF 				;Enter Key
+			BL DisplayChoices		;Display the choices for the user
+			LDR R1,=Choice			;Load in the memory address of Choice
+			BL GetCharINT			;Get a character from the user
+			BL CheckChoices			;Check to see if choice was valid and convert it
+			BL CRLF					;Carriage Return and Line Feed (equivalent to hitting the enter key)
+			LDR R0,=Q2				;Load the second question into R0
+			BL PutStringSB			;Display the first question
+			BL CRLF 				;Enter Key
+			BL DisplayChoices		;Display the choices for the user
+			LDR R1,=Choice			;Load in the memory address of Choice
+			BL GetCharINT			;Get a character from the user
+			BL CheckChoices			;Check to see if choice was valid and convert it
+			BL CRLF					;Carriage Return and Line Feed (equivalent to hitting the enter key)
+			LDR R0,=Q3				;Load the third question into R0
+			BL PutStringSB			;Display the first question
+			BL CRLF 				;Enter Key
+			BL DisplayChoices		;Display the choices for the user
+			LDR R1,=Choice			;Load in the memory address of Choice
+			BL GetCharINT			;Get a character from the user
+			BL CheckChoices			;Check to see if choice was valid and convert it
 ;>>>>>   end main program code <<<<<
 ;Stay here
 EndIT		
@@ -1036,10 +1065,25 @@ DisplayChoices	PROC {R0-R13},{}
 ;-------------------------------------------------------------------
 CheckChoices	PROC {R0-R13},{}
 ;Subroutine that checks the users choices
-;Inputs: R2 = Holds the answer that the user typed.
+;Inputs: 
+;R0 = Holds the answer that the user typed.
+;R1 = Memory address of choice
 ;Outputs: Stores answer choice in memory
-				PUSH {R0-R2}	;Push registers to save onto stack
-				
+				PUSH {R1}			;Push registers to modify onto stack.
+				CMP R0,#'a'			;Compare input to 'a'
+				BHS checktheZ		;Checks if input is less than z
+				B endCheckChoices	;If it is not zero, then
+checktheZ		CMP R0,#'z'		 	;Compare input to 'z'
+				BLS validLetter	 	;It's valid if in the range
+				BHS endCheckChoices	;If input > 'z,' end the checker
+validLetter		SUBS R0,R0,#0x20 	;Convert to ASCII
+				STRB R0,[R1,#0]		;Store answer choice into memory
+				ADDS R1,R1,#1		;Increment pointer
+endCheckChoices POP {R1}			;Pop saved registers
+				BX LR				;Branch and exchange back to link register
+				ENDP				;End the subroutine
+;---------------------------------------------------------------
+
 ;>>>>>   end subroutine code <<<<<
             ALIGN
 ;****************************************************************
@@ -1172,7 +1216,7 @@ TxQRecord	SPACE	Q_REC_SZ	;Transmit Queue Record
 	ALIGN
 String		SPACE	MAX_STRING
 	ALIGN
-Answer		SPACE	10
+Choice		SPACE	1
 ;>>>>>   end variables here <<<<<
             ALIGN
             END
