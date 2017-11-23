@@ -364,10 +364,14 @@ Decide			PROC{R0-R13},{}
 ;This subroutine gives the user their personality type
 ;Inputs:
 ;R0 = M[choices]
-;R1 = Count
+;R1 = Score
+;R2 = Counter for Size of Array
 ;Outputs:
 ;R0 = Your personality type
 				PUSH {LR}
+				MOVS R2,#0
+				CMP 
+				LDR R0,[R0,#0]
 				
 				POP {LR}
 				ENDP
