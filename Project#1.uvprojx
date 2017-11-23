@@ -400,6 +400,16 @@
               <FileType>2</FileType>
               <FilePath>.\Project#1.s</FilePath>
             </File>
+            <File>
+              <FileName>FIFODriver.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\Exercise11\FIFODriver.s</FilePath>
+            </File>
+            <File>
+              <FileName>SerialDriver.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\Exercise11\SerialDriver.s</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>
