@@ -369,7 +369,7 @@ Decide			PROC{R0-R13},{}
 ;Outputs:
 ;R0 = Your personality type
 				PUSH {LR}
-				MOVS R2,#0
+				
 				CMP 
 				LDR R0,[R0,#0]
 				
