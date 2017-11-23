@@ -369,11 +369,28 @@ Decide			PROC{R0-R13},{}
 ;Outputs:
 ;R0 = Your personality type
 				PUSH {LR}
-				
-				CMP 
-				LDR R0,[R0,#0]
-				
-				POP {LR}
+				MOVS R2,#0
+DecideLoop		CMP R2,#10
+				BEQ EndDecide
+				LDRB R3,[R0,#0]
+				ADDS R2,R2,#1
+				CMP R3,#'A'
+				BEQ NoIncrement
+				CMP R3,#'B'
+				BEQ Increment
+				CMP R3,#'C'
+				BEQ Increment
+				CMP R3,#'D'
+				BEQ NoIncrement
+				CMP R3,#'E'
+				BEQ Increment
+				CMP R3,#'F'
+				BEQ Increment
+				CMP R3,#'G'
+				BEQ NoIncrement
+NoIncrement		B DecideLoop
+Increment		ADDS R1,R1,#1
+EndDecide		POP {LR}
 				ENDP
 ;>>>>>   end subroutine code <<<<<
             ALIGN

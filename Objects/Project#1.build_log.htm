@@ -26,12 +26,18 @@ Project File Date:  11/22/2017
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 5 (build 528)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
-Build target 'Target 1'
+Rebuild target 'Target 1'
 assembling Project#1.s...
 Project#1.s: error: A1021U: No input file
 assembling SerialDriver.s...
-..\..\Exercise11\SerialDriver.s(514): warning: A1581W: Added 2 bytes of padding at address 0x15e
-".\Objects\Project#1.axf" - 1 Error(s), 1 Warning(s).
+..\..\Exercise11\SerialDriver.s(536): error: A1181E: Bad operator
+..\..\Exercise11\SerialDriver.s(537): error: A1163E: Unknown opcode SIM_SCGC5_PORTE_MASK) , expecting opcode or Macro
+assembling FIFODriver.s...
+..\..\Exercise11\FIFODriver.s(248): warning: A1581W: Added 2 bytes of padding at address 0x13a
+assembling MKL46Z4.s...
+assembling Start.s...
+assembling HardFault_LCD.s...
+".\Objects\Project#1.axf" - 3 Error(s), 1 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -46,7 +52,7 @@ Package Vendor: Keil
 
 <h2>Collection of Component Files used:</h2>
 Target not created.
-Build Time Elapsed:  00:00:01
+Build Time Elapsed:  00:00:02
 </pre>
 </body>
 </html>
