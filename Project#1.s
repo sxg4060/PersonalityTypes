@@ -497,10 +497,6 @@ TxQBuffer   SPACE   Q_BUF_SZ	;Transmit Queue Buffer
 	ALIGN
 TxQRecord	SPACE	Q_REC_SZ	;Transmit Queue Record
 	ALIGN 
-;Count		SPACE	OneByte
-;	ALIGN
-;RunStopWatch SPACE 	1
-	ALIGN
 String		SPACE	MAX_STRING
 	ALIGN
 Choices		SPACE 	10
