@@ -74,12 +74,12 @@ main
 			BL PutStringSB			;Display the welcome message on the terminal
 			BL CRLF					;Carriage Return and Line Feed (equivalent to hitting the enter key)
 			;First Question
-			LDR R0,=Q1				;Load the first question into R0
+			LDR R0,=Question1		;Load the first question into R0
 			BL PutStringSB			;Display the first question
 			BL CRLF 				;Enter Key
 			BL DisplayChoices		;Display the choices for the user
 			LDR R1,=Choices			;Load in the memory address of Choice
-			BL GetCharINT			;Get a character from the user
+			BL GetChar			;Get a character from the user
 			;Initializing Timer here
 			LDR R7,=RunStopWatch	;Load in stop watch boolean
 			MOVS R6,#1				;Load a 1 into R6 to set stop watch boolean
@@ -87,84 +87,84 @@ main
 			BL CheckChoices			;Check to see if choice was valid and convert it
 			BL CRLF					;Carriage Return and Line Feed (equivalent to hitting the enter key)
 			;Second Question
-			LDR R0,=Q2				;Load the first question into R0
+			LDR R0,=Question2				;Load the first question into R0
 			BL PutStringSB			;Display the first question
 			BL CRLF 				;Enter Key
 			BL DisplayChoices		;Display the choices for the user
 			LDR R1,=Choices			;Load in the memory address of Choice
-			BL GetCharINT			;Get a character from the user
+			BL GetChar			;Get a character from the user
 			BL CheckChoices			;Check to see if choice was valid and convert it
 			BL CRLF					;Carriage Return and Line Feed (equivalent to hitting the enter key)
 			;Third Question
-			LDR R0,=Q3				;Load the second question into R0
+			LDR R0,=Question3				;Load the second question into R0
 			BL PutStringSB			;Display the first question
 			BL CRLF 				;Enter Key
 			BL DisplayChoices		;Display the choices for the user
-			LDR R1,=Choice			;Load in the memory address of Choice
-			BL GetCharINT			;Get a character from the user
+			LDR R1,=Choices			;Load in the memory address of Choice
+			BL GetChar			;Get a character from the user
 			BL CheckChoices			;Check to see if choice was valid and convert it
 			BL CRLF					;Carriage Return and Line Feed (equivalent to hitting the enter key)
 			;Fourth Question
-			LDR R0,=Q4				;Load the third question into R0
+			LDR R0,=Question4				;Load the third question into R0
 			BL PutStringSB			;Display the first question
 			BL CRLF 				;Enter Key
 			BL DisplayChoices		;Display the choices for the user
-			LDR R1,=Choice			;Load in the memory address of Choice
-			BL GetCharINT			;Get a character from the user
+			LDR R1,=Choices			;Load in the memory address of Choice
+			BL GetChar			;Get a character from the user
 			BL CheckChoices			;Check to see if choice was valid and convert it
 			BL CRLF					;Carriage Return and Line Feed
 			;Fifth Question
-			LDR R0,=Q5				;Load the third question into R0
+			LDR R0,=Question5				;Load the third question into R0
 			BL PutStringSB			;Display the first question
 			BL CRLF 				;Enter Key
 			BL DisplayChoices		;Display the choices for the user
-			LDR R1,=Choice			;Load in the memory address of Choice
-			BL GetCharINT			;Get a character from the user
+			LDR R1,=Choices			;Load in the memory address of Choice
+			BL GetChar			;Get a character from the user
 			BL CheckChoices			;Check to see if choice was valid and convert it
 			BL CRLF					;Carriage Return and Line Feed
 			;Sixth Question
-			LDR R0,=Q6				;Load the third question into R0
+			LDR R0,=Question6				;Load the third question into R0
 			BL PutStringSB			;Display the first question
 			BL CRLF 				;Enter Key
 			BL DisplayChoices		;Display the choices for the user
-			LDR R1,=Choice			;Load in the memory address of Choice
-			BL GetCharINT			;Get a character from the user
+			LDR R1,=Choices			;Load in the memory address of Choice
+			BL GetChar			;Get a character from the user
 			BL CheckChoices			;Check to see if choice was valid and convert it
 			BL CRLF					;Carriage Return and Line Feed
 			;Seventh Question
-			LDR R0,=Q7				;Load the third question into R0
+			LDR R0,=Question7				;Load the third question into R0
 			BL PutStringSB			;Display the first question
 			BL CRLF 				;Enter Key
 			BL DisplayChoices		;Display the choices for the user
-			LDR R1,=Choice			;Load in the memory address of Choice
-			BL GetCharINT			;Get a character from the user
+			LDR R1,=Choices			;Load in the memory address of Choice
+			BL GetChar			;Get a character from the user
 			BL CheckChoices			;Check to see if choice was valid and convert it
 			BL CRLF					;Carriage Return and Line Feed
 			;Eigth Question
-			LDR R0,=Q8				;Load the third question into R0
+			LDR R0,=Question8				;Load the third question into R0
 			BL PutStringSB			;Display the first question
 			BL CRLF 				;Enter Key
 			BL DisplayChoices		;Display the choices for the user
-			LDR R1,=Choice			;Load in the memory address of Choice
-			BL GetCharINT			;Get a character from the user
+			LDR R1,=Choices			;Load in the memory address of Choice
+			BL GetChar			;Get a character from the user
 			BL CheckChoices			;Check to see if choice was valid and convert it
 			BL CRLF					;Carriage Return and Line Feed
 			;Ninth Question
-			LDR R0,=Q9				;Load the third question into R0
+			LDR R0,=Question9				;Load the third question into R0
 			BL PutStringSB			;Display the first question
 			BL CRLF 				;Enter Key
 			BL DisplayChoices		;Display the choices for the user
-			LDR R1,=Choice			;Load in the memory address of Choice
-			BL GetCharINT			;Get a character from the user
+			LDR R1,=Choices			;Load in the memory address of Choice
+			BL GetChar			;Get a character from the user
 			BL CheckChoices			;Check to see if choice was valid and convert it
 			BL CRLF					;Carriage Return and Line Feed
 			;Tenth Question
-			LDR R0,=Q10				;Load the third question into R0
+			LDR R0,=Question10				;Load the third question into R0
 			BL PutStringSB			;Display the first question
 			BL CRLF 				;Enter Key
 			BL DisplayChoices		;Display the choices for the user
-			LDR R1,=Choice			;Load in the memory address of Choice
-			BL GetCharINT			;Get a character from the user
+			LDR R1,=Choices			;Load in the memory address of Choice
+			BL GetChar			;Get a character from the user
 			BL CheckChoices			;Check to see if choice was valid and convert it
 			BL CRLF					;Carriage Return and Line Feed
 			;Give choice
@@ -180,7 +180,7 @@ main
 			BL PutStringSB			;Display time message
 			LDR R7,=Count			;Load count
 			LDR R0,[R7,#0]			;Load value of count into R0
-			BL PuNumU				;Display time it took to finish the test
+			BL PutNumU				;Display time it took to finish the test
 			MOVS R6,#0
 			STR R6,[R7,#0]
 ;>>>>>   end main program code <<<<<
@@ -192,9 +192,9 @@ main
 CRLF				PROC {R0-R13},{}
 					PUSH {R0,LR}
 					MOVS R0,#CR
-					BL PutCharINT
+					BL PutChar
 					MOVS R0,#LF
-					BL PutCharINT
+					BL PutChar
 					POP {R0,PC}
 					ENDP
 ;-----------------------------------------------------------------------------------
@@ -212,36 +212,36 @@ GetStringSB PROC {R0-R13},{}
             MOV R2,R0           ;Move R0's contents into R2 before calloing GetChar, which will overwrite R0's contents
             MOVS R3,#0          ;Initialize counter R3 with 0
 			SUBS R1,R1,#1		;Decrement the MAX_STRING value by one to account for the null character
-While   	BL GetCharINT       ;Call GetChar to get the character from the user input
+While   	BL GetChar       ;Call GetChar to get the character from the user input
 			CMP R0,#0x0D        ;Compare input to carriage return to see if it has reached character return
             BEQ NullTerminate	;Branch to null terminate if the character recieved was a carriage return
 			CMP R0,#0x1F		;Compare input to special keys
 			BLO While			;If the input is less than 0x1F, then ignore the character and branch back to while
 			CMP R0,#0x7F		;Compare input to delete
 			BEQ IgnoreBack		;If the input is 0x07F, then branch to IgnoreBack, which null terminates the character
-			BL PutCharINT		;Display the character on the terminal
+			BL PutChar		;Display the character on the terminal
 			STRB R0,[R2,R3]		;Store the character into the String's memory address in R2, with an offset of R3
 			ADDS R3,R3,#1		;Increment counter to go to next index of the string
 			CMP R3,R1         	;Compare my counter to the max string size
 			BLO While			;If counter < max_string, continue looping and taking in character
-While2   	BL GetCharINT       ;If counter >= max_string, take in another character
+While2   	BL GetChar		    ;If counter >= max_string, take in another character
 			CMP R0,#0x0D        ;Compare input to carriage return to see if it has reached carriage return
             BEQ NullTerminate	;If input was equal to carriage return, then branch to NullTerminate 
 			B While2			;If not equal to carriage return, then branch to While2
 			
 			
-IgnoreBack  BL   PutCharINT		;If input != Carriage return, branch here and display the next character
+IgnoreBack  BL   PutChar		;If input != Carriage return, branch here and display the next character
     		SUBS R3,R3,#1		;Decrement counter to go back and null a character
 			MOVS R0,#0          ;Move NULL(0) into R0
             STRB R0,[R2,R3]     ;Store the null byte, R0, into the memory address of the string with and offset of R3		
 			B While				;Branch back to while to input another character
 			
 						
-NullTerminate BL PutCharINT		;Display the carriage return on the terminal
+NullTerminate BL PutChar		;Display the carriage return on the terminal
               MOVS R0,#0	    ;Null terminate the string
               STRB R0,[R2,R3]   ;Store null terminated string in R2 with R3 offset
               MOVS R0,#0x0A     ;Line Feed to upadate line
-			  BL PutCharINT		;Put the LF on the terminal
+			  BL PutChar		;Put the LF on the terminal
 			  B EndGetStringSB	;End the Loop
 
 EndGetStringSB					;Label denoting end of the subroutine
@@ -307,7 +307,7 @@ PopAll		POP {R0}				;Pop remainders into R0
 			
 			SUBS R3,R3,#1			;Decrement counter by 1 
 			ADDS R0,R0,#0x30		;Add 30 to R0 to convert to ASCII
-			BL PutCharINT			;Print the value popped
+			BL PutChar			;Print the value popped
 			CMP R3,#0				;Compare counter to 0
 			BEQ EndPutNumU			;Pop R1's contents into R0			
 			B PopAll				;Continue popping all until R3 = 0
@@ -380,7 +380,7 @@ endCheckChoices POP {R1}			;Pop saved registers
 				BX LR				;Branch and exchange back to link register
 				ENDP				;End the subroutine
 ;---------------------------------------------------------------
-Decide			PROC{R0-R13},{}
+Decide			PROC {R0-R13},{}
 ;This subroutine gives the user their personality type
 ;Inputs:
 ;R0 = M[choices]
@@ -410,7 +410,7 @@ DecideLoop		CMP R2,#10
 				BEQ NoIncrement
 NoIncrement		B DecideLoop
 Increment		ADDS R1,R1,#1
-EndDecide		POP {LR}
+EndDecide		POP {PC}
 				ENDP
 ;>>>>>   end subroutine code <<<<<
             ALIGN
@@ -456,7 +456,7 @@ __Vectors
             DCD    Dummy_Handler      ;25:I2C1
             DCD    Dummy_Handler      ;26:SPI0 (all IRQ sources)
             DCD    Dummy_Handler      ;27:SPI1 (all IRQ sources)
-            DCD    UART0_ISR	      ;28:UART0 (status; error)
+            DCD    UART0_IRQHandler	  ;28:UART0 (status; error)
             DCD    Dummy_Handler      ;29:UART1 (status; error)
             DCD    Dummy_Handler      ;30:UART2 (status; error)
             DCD    Dummy_Handler      ;31:ADC0
@@ -486,16 +486,16 @@ __Vectors_Size  EQU     __Vectors_End - __Vectors
 ;Welcome Message
 Welcome DCB "Welcome to the personality test! Let's begin!",0
 ;Questions
-Q1	DCB		"I see myself as extraverted, enthusiatic.",0
-Q2	DCB		"I see myself as critical, quarrelsome.",0
-Q3	DCB		"I see myself as dependable, self-disciplined.",0
-Q4	DCB		"I see myself as anxious, easily upset.",0
-Q5	DCB		"I see myself as open to new experiences, complex.",0
-Q6	DCB		"I see myself as reserved, quiet.",0
-Q7	DCB		"I see myself as sympathetic, warm.",0
-Q8	DCB		"I see myself as disorganized, careless.",0
-Q9	DCB		"I see myself as calm, emotionally stable.",0
-Q10 DCB		"I see myself as conventional, uncreative.",0
+Question1	DCB		"I see myself as extraverted, enthusiatic.",0
+Question2	DCB		"I see myself as critical, quarrelsome.",0
+Question3	DCB		"I see myself as dependable, self-disciplined.",0
+Question4	DCB		"I see myself as anxious, easily upset.",0
+Question5	DCB		"I see myself as open to new experiences, complex.",0
+Question6	DCB		"I see myself as reserved, quiet.",0
+Question7	DCB		"I see myself as sympathetic, warm.",0
+Question8	DCB		"I see myself as disorganized, careless.",0
+Question9	DCB		"I see myself as calm, emotionally stable.",0
+Question10  DCB		"I see myself as conventional, uncreative.",0
 ;Choices per question
 DS	DCB 	"A: Disagree Strongly",0
 DM	DCB 	"B: Disagree Moderately",0

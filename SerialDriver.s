@@ -534,8 +534,8 @@ Init_GPIO	PROC {R0-R13},{}
 			PUSH {R0-R3}
 ;Enabling clock for PORT D and E modules
 			LDR R0,=SIM_SCGC5					;Load into R0 &SIM_SCGC5
-			LDR R1,=(SIM_SCGC5_PORTD_MASK :O: \	;Load into R1 the orring 
-					 SIM_SCGC5_PORTE_MASK)		;of Port D and Port E mem. addresses
+			LDR R1,=(SIM_SCGC5_PORTD_MASK :OR: SIM_SCGC5_PORTE_MASK)	;Load into R1 the orring 
+					 		;of Port D and Port E mem. addresses
 			LDR R2,[R0,#0]						;Load SCGC5 value
 			ORRS R2,R2,R1						;Set the clock for Port D and E
 			STR R2,[R0,#0]						;Store the set values into memory address of SIM_SCGC5
