@@ -1,8 +1,8 @@
-            TTL FifoDriver
+					TTL FifoDriver
 ;****************************************************************
 ;Description: Driver for Queue Operations
 ;the user.
-;Name: Sahil Gogna
+;Names: Sahil Gogna and Timmy Wang
 ;Date: 11-11-17
 ;Class: CMPE-250
 ;Section: 02,Tuesday, 11:00 AM - 1:00 PM

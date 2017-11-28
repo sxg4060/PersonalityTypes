@@ -1,4 +1,4 @@
-            TTL KL46Z Hard Fault LCD Display
+				TTL KL46Z Hard Fault LCD Display
 ;****************************************************************
 ;HardFault_Handler displays lower halfword of address that caused
 ;hard fault on LCD.

@@ -1,8 +1,8 @@
-            TTL Personality Types
+				TTL CMPE 250 Exercise 12
 ;****************************************************************
 ;This is my first formal project in assembly language.
 ;My aim is to create a game to figure out your personality type.
-;Name: Sahil Gogna
+;Names: Sahil Gogna and Timmy Wang
 ;Date: 11-8-17
 ;Class: CMPE-250
 ;Section: 02,Tuesday, 11:00 AM - 1:00 PM
@@ -53,6 +53,7 @@ MAX_STRING EQU 79
 			IMPORT PutChar
 			IMPORT PIT_ISR
 			IMPORT Init_PIT_IRQ
+			IMPORT Init_GPIO
 Reset_Handler  PROC  {},{}
 main
 ;---------------------------------------------------------------
@@ -64,19 +65,25 @@ main
 ;>>>>> begin main program code <<<<<
 
 			BL Init_UART0_IRQ		;Initialize UART0 for serial driver
+			BL Init_PIT_IRQ			;Initialize PIT Timer
 			CPSIE I					;Unmask interrupts from KL46 devices
 ;----------------------------------------------------------------
 			MOVS R2,#0				;Initialize counter
 			LDR R0,=Welcome			;Load the welcome message into R0
-			MOVS R1,#MAX_STRING		;Load in a buffer capacity for the string
+			MOVS R5,#MAX_STRING		;Load in a buffer capacity for the string
 			BL PutStringSB			;Display the welcome message on the terminal
 			BL CRLF					;Carriage Return and Line Feed (equivalent to hitting the enter key)
+			;First Question
 			LDR R0,=Q1				;Load the first question into R0
 			BL PutStringSB			;Display the first question
 			BL CRLF 				;Enter Key
 			BL DisplayChoices		;Display the choices for the user
 			LDR R1,=Choices			;Load in the memory address of Choice
 			BL GetCharINT			;Get a character from the user
+			;Initializing Timer here
+			LDR R7,=RunStopWatch	;Load in stop watch boolean
+			MOVS R6,#1				;Load a 1 into R6 to set stop watch boolean
+			STRB R6,[R7,#0]			;Move a one into the stop watch to let the count decrement
 			BL CheckChoices			;Check to see if choice was valid and convert it
 			BL CRLF					;Carriage Return and Line Feed (equivalent to hitting the enter key)
 			;Second Question
@@ -161,10 +168,23 @@ main
 			BL CheckChoices			;Check to see if choice was valid and convert it
 			BL CRLF					;Carriage Return and Line Feed
 			;Give choice
-			BL Decide
+			BL Decide				;Decide upon the personality type the user is
+			;Stop Counter
+			LDR R7,=RunStopWatch	;Load in stop watch boolean
+			MOVS R6,#0
+			STRB R6,[R7,#0]
+			;Give total time it took to take the test
+			BL CRLF
+			LDR R0,=Time
+			MOVS R1,R5				;
+			BL PutStringSB			;Display time message
+			LDR R7,=Count			;Load count
+			LDR R0,[R7,#0]			;Load value of count into R0
+			BL PuNumU				;Display time it took to finish the test
+			MOVS R6,#0
+			STR R6,[R7,#0]
 ;>>>>>   end main program code <<<<<
 ;Stay here
-EndIT		
 			ENDP 
 			LTORG	
 ;----------------------------------------------------------------------------------
@@ -503,6 +523,8 @@ ESTP DCB 	"ESTP - Entrepreneur",0
 ESFP DCB 	"ESFP - Entertainer",0
 ;Goodbye Message
 Bye	 DCB 	"Thank you for taking the test! Goodbye now.",0
+;Time Message
+Time DCB    "Time took to complete this: ",0
 ;>>>>>   end constants here <<<<<		
             ALIGN
 ;****************************************************************
@@ -518,9 +540,13 @@ TxQBuffer   SPACE   Q_BUF_SZ	;Transmit Queue Buffer
 	ALIGN
 TxQRecord	SPACE	Q_REC_SZ	;Transmit Queue Record
 	ALIGN 
-String		SPACE	MAX_STRING
+String		SPACE	MAX_STRING	;String array variable
 	ALIGN
-Choices		SPACE 	10
+Choices		SPACE 	10			;Choice array variable
+	ALIGN
+RunStopWatch SPACE 1			;RunStopWatch 
+	ALIGN
+Count SPACE 4					;Count
 ;>>>>>   end variables here <<<<<
             ALIGN
             END

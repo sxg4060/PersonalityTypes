@@ -1,4 +1,4 @@
-            TTL KL46Z Bare Metal Assembly Startup
+			TTL KL46Z Bare Metal Assembly Startup
 ;****************************************************************
 ;* Flash configuration image for area at 0x400-0x40F(+)
 ;* SystemInit subroutine (++)

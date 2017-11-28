@@ -1,7 +1,7 @@
-                       TTL SerialDriver
+ TTL SerialDriver
 ;****************************************************************
 ;Description: Serial Driver for UART0 Interrupts 
-;Name: Sahil Gogna
+;Names: Sahil Gogna and Timmy Wang
 ;Date: 11-11-17
 ;Class: CMPE-250
 ;Section: 02,Tuesday, 11:00 AM - 1:00 PM
@@ -284,6 +284,7 @@ LED_PORTE_MASK  EQU LED_RED_MASK
         EXPORT GetChar
 		EXPORT PIT_ISR
 		EXPORT Init_PIT_IRQ
+		EXPORT Init_GPIO
         AREA SerialDriver,CODE,READONLY
 ;*****************************************************************
 PIT_ISR				PROC {R0-R13},{}
@@ -546,6 +547,38 @@ Init_GPIO	PROC {R0-R13},{}
 			LDR R0,=PORTD_BASE
 			LDR R1,=SET_PTD5_GPIO
 			STR R1,[R0,#PORTD_PCR5_OFFSET]
+;Select data direction (input or output)
+			;RED LED 
+			LDR R0,=FGPIOD_BASE
+			LDR R1,=LED_PORTD_MASK
+			STR R1,[R0,#GPIO_PDDR_OFFSET]
+			;GREEN LED 
+			LDR R0,=FGPIOE_BASE
+			LDR R1,=LED_PORTE_MASK
+			STR R1,[R0,#GPIO_PDDR_OFFSET]
+			
+			;RED LED OFF
+			LDR R0,=FGPIOE_BASE
+			LDR R1,=LED_RED_MASK
+			STR R1,[R0,#GPIO_PSOR_OFFSET]
+			
+			;GREEN LED OFF
+			LDR R0,=FGPIOD_BASE
+			LDR R1,=LED_GREEN_MASK
+			STR R1,[R0,#GPIO_PSOR_OFFSET]
+			
+			;RED LED ON
+			LDR R0,=FGPIOE_BASE
+			LDR R1,=LED_RED_MASK
+			STR R1,[R0,#GPIO_PCOR_OFFSET]
+			
+			;GREEN LED ON
+			LDR R0,=FGPIOD_BASE
+			LDR R1,=LED_GREEN_MASK
+			STR R1,[R0,#GPIO_PCOR_OFFSET]
+			
+			POP {R0-R3}
+			ENDP
 ;****************************************************************
 ;Variables
             AREA    MyData,DATA,READWRITE
