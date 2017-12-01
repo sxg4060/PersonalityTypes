@@ -53,7 +53,12 @@ MAX_STRING EQU 79
 			IMPORT PutChar
 			IMPORT PIT_ISR
 			IMPORT Init_PIT_IRQ
-			IMPORT Init_GPIO
+			IMPORT BOTH_ON
+			IMPORT BOTH_OFF
+			IMPORT GREEN_ON
+			IMPORT GREEN_OFF
+			IMPORT RED_ON
+			IMPORT RED_OFF
 Reset_Handler  PROC  {},{}
 main
 ;---------------------------------------------------------------
@@ -66,6 +71,12 @@ main
 
 			BL Init_UART0_IRQ		;Initialize UART0 for serial driver
 			BL Init_PIT_IRQ			;Initialize PIT Timer
+			BL GREEN_ON
+			BL GREEN_OFF
+			BL RED_ON
+			BL RED_OFF
+			BL BOTH_ON
+			BL BOTH_OFF
 			CPSIE I					;Unmask interrupts from KL46 devices
 ;----------------------------------------------------------------
 			MOVS R2,#0				;Initialize counter
@@ -81,7 +92,6 @@ main
 			LDR R1,=Choices			;Load in the memory address of Choice
 			BL GetChar			;Get a character from the user
 			BL PutChar
-			BL Init_GPIO
 			;Initializing Timer here
 			LDR R7,=RunStopWatch	;Load in stop watch boolean
 			MOVS R6,#1				;Load a 1 into R6 to set stop watch boolean

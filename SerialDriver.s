@@ -284,7 +284,12 @@ LED_PORTE_MASK  EQU LED_RED_MASK
         EXPORT GetChar
 		EXPORT PIT_ISR
 		EXPORT Init_PIT_IRQ
-		EXPORT Init_GPIO
+		EXPORT BOTH_ON
+		EXPORT BOTH_OFF
+		EXPORT GREEN_ON
+		EXPORT GREEN_OFF
+		EXPORT RED_ON
+		EXPORT RED_OFF
         AREA SerialDriver,CODE,READONLY
 ;*****************************************************************
 PIT_ISR				PROC {R0-R13},{}
@@ -528,8 +533,160 @@ RepeatTx	CPSID I						;Mask all interrupts
 			STRB R1,[R0,#UART0_C2_OFFSET] ;Store R1 into C2
 			POP {R0-R1,PC}				;Pop saved registers
 			ENDP						;End process
-;----------------------------------------------------    
-Init_GPIO	PROC {R0-R13},{}
+;----------------------------------------------------
+RED_OFF		PROC {R0-R13},{}
+;RED LED On/Off
+			PUSH {R0-R3}
+			;Enabling clock for PORT D and E modules
+			LDR R0,=SIM_SCGC5					;Load into R0 &SIM_SCGC5
+			LDR R1,=(SIM_SCGC5_PORTD_MASK :OR: SIM_SCGC5_PORTE_MASK)	;Load into R1 the orring ;of Port D and Port E mem. addresses
+			LDR R2,[R0,#0]						;Load SCGC5 value
+			ORRS R2,R2,R1						;Set the clock for Port D and E
+			STR R2,[R0,#0]						;Store the set values into memory address of SIM_SCGC5
+;Select PORT E Pin 29 for GPIO to red LED
+			LDR R0,=PORTE_BASE
+			LDR R1,=SET_PTE29_GPIO
+			STR R1,[R0,#PORTE_PCR29_OFFSET]
+;Select data direction (input or output)
+			;RED LED 
+			LDR R0,=FGPIOE_BASE
+			LDR R1,=LED_PORTE_MASK
+			STR R1,[R0,#GPIO_PDDR_OFFSET]			
+			;RED LED OFF
+			LDR R0,=FGPIOE_BASE
+			LDR R1,=LED_RED_MASK
+			STR R1,[R0,#GPIO_PSOR_OFFSET]
+			POP {R0-R3}
+			BX LR
+			ENDP
+;-------------------------------------------------------------
+RED_ON		PROC {R0-R13},{}
+;RED LED On/Off
+			PUSH {R0-R3}
+			;Enabling clock for PORT D and E modules
+			LDR R0,=SIM_SCGC5					;Load into R0 &SIM_SCGC5
+			LDR R1,=(SIM_SCGC5_PORTD_MASK :OR: SIM_SCGC5_PORTE_MASK)	;Load into R1 the orring ;of Port D and Port E mem. addresses
+			LDR R2,[R0,#0]						;Load SCGC5 value
+			ORRS R2,R2,R1						;Set the clock for Port D and E
+			STR R2,[R0,#0]						;Store the set values into memory address of SIM_SCGC5
+;Select PORT E Pin 29 for GPIO to red LED
+			LDR R0,=PORTE_BASE
+			LDR R1,=SET_PTE29_GPIO
+			STR R1,[R0,#PORTE_PCR29_OFFSET]
+;Select data direction (input or output)
+			;RED LED 
+			LDR R0,=FGPIOE_BASE
+			LDR R1,=LED_PORTE_MASK
+			STR R1,[R0,#GPIO_PDDR_OFFSET]			
+			;RED LED ON
+			LDR R0,=FGPIOE_BASE
+			LDR R1,=LED_RED_MASK
+			STR R1,[R0,#GPIO_PCOR_OFFSET]
+			POP {R0-R3}
+			BX LR
+			ENDP
+;----------------------------------------------------
+GREEN_OFF	PROC {R0-R13},{}
+;Enables port/modules to activate lights on KL46 FDRM Board
+			PUSH {R0-R2}
+;Enabling clock for PORT D and E modules
+			LDR R0,=SIM_SCGC5					;Load into R0 &SIM_SCGC5
+			LDR R1,=(SIM_SCGC5_PORTD_MASK :OR: SIM_SCGC5_PORTE_MASK)	;Load into R1 the orring 
+					 		;of Port D and Port E mem. addresses
+			LDR R2,[R0,#0]						;Load SCGC5 value
+			ORRS R2,R2,R1						;Set the clock for Port D and E
+			STR R2,[R0,#0]						;Store the set values into memory address of SIM_SCGC5
+;Select PORT D Pin 5 for GPIO to green LED
+			LDR R0,=PORTD_BASE
+			LDR R1,=SET_PTD5_GPIO
+			STR R1,[R0,#PORTD_PCR5_OFFSET]
+;Select data direction (input or output)
+			;GREEN LED ENABLE
+			LDR R0,=FGPIOD_BASE
+			LDR R1,=LED_PORTD_MASK
+			STR R1,[R0,#GPIO_PDDR_OFFSET]			
+			;GREEN LED OFF
+			LDR R0,=FGPIOD_BASE
+			LDR R1,=LED_GREEN_MASK
+			STR R1,[R0,#GPIO_PSOR_OFFSET]
+			POP {R0-R2}
+			BX LR
+			ENDP
+;-------------------------------------------------------
+GREEN_ON	PROC {R0-R13},{}
+;Enables port/modules to activate lights on KL46 FDRM Board
+			PUSH {R0-R2}
+;Enabling clock for PORT D and E modules
+			LDR R0,=SIM_SCGC5					;Load into R0 &SIM_SCGC5
+			LDR R1,=(SIM_SCGC5_PORTD_MASK :OR: SIM_SCGC5_PORTE_MASK)	;Load into R1 the orring 
+					 		;of Port D and Port E mem. addresses
+			LDR R2,[R0,#0]						;Load SCGC5 value
+			ORRS R2,R2,R1						;Set the clock for Port D and E
+			STR R2,[R0,#0]						;Store the set values into memory address of SIM_SCGC5
+;Select PORT D Pin 5 for GPIO to green LED
+			LDR R0,=PORTD_BASE
+			LDR R1,=SET_PTD5_GPIO
+			STR R1,[R0,#PORTD_PCR5_OFFSET]
+;Select data direction (input or output)
+			;GREEN LED ENABLE
+			LDR R0,=FGPIOD_BASE
+			LDR R1,=LED_PORTD_MASK
+			STR R1,[R0,#GPIO_PDDR_OFFSET]			
+			;GREEN LED OFF
+			LDR R0,=FGPIOD_BASE
+			LDR R1,=LED_GREEN_MASK
+			STR R1,[R0,#GPIO_PSOR_OFFSET]
+			;GREEN LED ON
+			LDR R0,=FGPIOD_BASE
+			LDR R1,=LED_GREEN_MASK
+			STR R1,[R0,#GPIO_PCOR_OFFSET]
+			POP {R0-R2}
+			BX LR
+			ENDP
+;----------------------------------------------------
+BOTH_ON		PROC {R0-R13},{}
+;Enables port/modules to activate lights on KL46 FDRM Board
+			PUSH {R0-R3}
+;Enabling clock for PORT D and E modules
+			LDR R0,=SIM_SCGC5					;Load into R0 &SIM_SCGC5
+			LDR R1,=(SIM_SCGC5_PORTD_MASK :OR: SIM_SCGC5_PORTE_MASK)	;Load into R1 the orring 
+					 		;of Port D and Port E mem. addresses
+			LDR R2,[R0,#0]						;Load SCGC5 value
+			ORRS R2,R2,R1						;Set the clock for Port D and E
+			STR R2,[R0,#0]						;Store the set values into memory address of SIM_SCGC5
+;Select PORT E Pin 29 for GPIO to red LED
+			LDR R0,=PORTE_BASE
+			LDR R1,=SET_PTE29_GPIO
+			STR R1,[R0,#PORTE_PCR29_OFFSET]
+;Sekect PORT D Pin 5 for GPIO to green LED
+			LDR R0,=PORTD_BASE
+			LDR R1,=SET_PTD5_GPIO
+			STR R1,[R0,#PORTD_PCR5_OFFSET]
+;Select data direction (input or output)
+			;RED LED 
+			LDR R0,=FGPIOD_BASE
+			LDR R1,=LED_PORTD_MASK
+			STR R1,[R0,#GPIO_PDDR_OFFSET]
+			;GREEN LED 
+			LDR R0,=FGPIOE_BASE
+			LDR R1,=LED_PORTE_MASK
+			STR R1,[R0,#GPIO_PDDR_OFFSET]
+			
+			;RED LED ON
+			LDR R0,=FGPIOE_BASE
+			LDR R1,=LED_RED_MASK
+			STR R1,[R0,#GPIO_PCOR_OFFSET]
+			
+			;GREEN LED ON
+			LDR R0,=FGPIOD_BASE
+			LDR R1,=LED_GREEN_MASK
+			STR R1,[R0,#GPIO_PCOR_OFFSET]
+
+			POP {R0-R3}
+			BX LR
+			ENDP
+;--------------------------------------------------------------
+BOTH_OFF		PROC {R0-R13},{}
 ;Enables port/modules to activate lights on KL46 FDRM Board
 			PUSH {R0-R3}
 ;Enabling clock for PORT D and E modules
@@ -566,17 +723,7 @@ Init_GPIO	PROC {R0-R13},{}
 			LDR R0,=FGPIOD_BASE
 			LDR R1,=LED_GREEN_MASK
 			STR R1,[R0,#GPIO_PSOR_OFFSET]
-			
-			;RED LED ON
-			LDR R0,=FGPIOE_BASE
-			LDR R1,=LED_RED_MASK
-			STR R1,[R0,#GPIO_PCOR_OFFSET]
-			
-			;GREEN LED ON
-			LDR R0,=FGPIOD_BASE
-			LDR R1,=LED_GREEN_MASK
-			STR R1,[R0,#GPIO_PCOR_OFFSET]
-			
+
 			POP {R0-R3}
 			BX LR
 			ENDP
