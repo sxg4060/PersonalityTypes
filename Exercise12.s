@@ -80,6 +80,8 @@ main
 			BL DisplayChoices		;Display the choices for the user
 			LDR R1,=Choices			;Load in the memory address of Choice
 			BL GetChar			;Get a character from the user
+			BL PutChar
+			BL Init_GPIO
 			;Initializing Timer here
 			LDR R7,=RunStopWatch	;Load in stop watch boolean
 			MOVS R6,#1				;Load a 1 into R6 to set stop watch boolean
@@ -93,6 +95,7 @@ main
 			BL DisplayChoices		;Display the choices for the user
 			LDR R1,=Choices			;Load in the memory address of Choice
 			BL GetChar			;Get a character from the user
+			BL PutChar
 			BL CheckChoices			;Check to see if choice was valid and convert it
 			BL CRLF					;Carriage Return and Line Feed (equivalent to hitting the enter key)
 			;Third Question
@@ -102,6 +105,7 @@ main
 			BL DisplayChoices		;Display the choices for the user
 			LDR R1,=Choices			;Load in the memory address of Choice
 			BL GetChar			;Get a character from the user
+			BL PutChar
 			BL CheckChoices			;Check to see if choice was valid and convert it
 			BL CRLF					;Carriage Return and Line Feed (equivalent to hitting the enter key)
 			;Fourth Question
@@ -111,6 +115,7 @@ main
 			BL DisplayChoices		;Display the choices for the user
 			LDR R1,=Choices			;Load in the memory address of Choice
 			BL GetChar			;Get a character from the user
+			BL PutChar
 			BL CheckChoices			;Check to see if choice was valid and convert it
 			BL CRLF					;Carriage Return and Line Feed
 			;Fifth Question
@@ -120,6 +125,7 @@ main
 			BL DisplayChoices		;Display the choices for the user
 			LDR R1,=Choices			;Load in the memory address of Choice
 			BL GetChar			;Get a character from the user
+			BL PutChar
 			BL CheckChoices			;Check to see if choice was valid and convert it
 			BL CRLF					;Carriage Return and Line Feed
 			;Sixth Question
@@ -129,6 +135,7 @@ main
 			BL DisplayChoices		;Display the choices for the user
 			LDR R1,=Choices			;Load in the memory address of Choice
 			BL GetChar			;Get a character from the user
+			BL PutChar
 			BL CheckChoices			;Check to see if choice was valid and convert it
 			BL CRLF					;Carriage Return and Line Feed
 			;Seventh Question
@@ -138,6 +145,7 @@ main
 			BL DisplayChoices		;Display the choices for the user
 			LDR R1,=Choices			;Load in the memory address of Choice
 			BL GetChar			;Get a character from the user
+			BL PutChar
 			BL CheckChoices			;Check to see if choice was valid and convert it
 			BL CRLF					;Carriage Return and Line Feed
 			;Eigth Question
@@ -147,6 +155,7 @@ main
 			BL DisplayChoices		;Display the choices for the user
 			LDR R1,=Choices			;Load in the memory address of Choice
 			BL GetChar			;Get a character from the user
+			BL PutChar
 			BL CheckChoices			;Check to see if choice was valid and convert it
 			BL CRLF					;Carriage Return and Line Feed
 			;Ninth Question
@@ -156,6 +165,7 @@ main
 			BL DisplayChoices		;Display the choices for the user
 			LDR R1,=Choices			;Load in the memory address of Choice
 			BL GetChar			;Get a character from the user
+			BL PutChar
 			BL CheckChoices			;Check to see if choice was valid and convert it
 			BL CRLF					;Carriage Return and Line Feed
 			;Tenth Question
@@ -165,6 +175,7 @@ main
 			BL DisplayChoices		;Display the choices for the user
 			LDR R1,=Choices			;Load in the memory address of Choice
 			BL GetChar			;Get a character from the user
+			BL PutChar
 			BL CheckChoices			;Check to see if choice was valid and convert it
 			BL CRLF					;Carriage Return and Line Feed
 			;Give choice
@@ -303,8 +314,7 @@ Division	BL DIVU					;Call division subroutine
 			MOVS R0,#10				;Move 10 into R0 to begin the division process again
 			B Division				;Branch back to beginning of loop
 
-PopAll		POP {R0}				;Pop remainders into R0
-			
+PopAll		POP {R0}				;Pop remainders into R0	
 			SUBS R3,R3,#1			;Decrement counter by 1 
 			ADDS R0,R0,#0x30		;Add 30 to R0 to convert to ASCII
 			BL PutChar			;Print the value popped

@@ -1,4 +1,4 @@
- TTL SerialDriver
+					TTL SerialDriver
 ;****************************************************************
 ;Description: Serial Driver for UART0 Interrupts 
 ;Names: Sahil Gogna and Timmy Wang
@@ -578,6 +578,7 @@ Init_GPIO	PROC {R0-R13},{}
 			STR R1,[R0,#GPIO_PCOR_OFFSET]
 			
 			POP {R0-R3}
+			BX LR
 			ENDP
 ;****************************************************************
 ;Variables
