@@ -71,12 +71,6 @@ main
 
 			BL Init_UART0_IRQ		;Initialize UART0 for serial driver
 			BL Init_PIT_IRQ			;Initialize PIT Timer
-			BL GREEN_ON
-			BL GREEN_OFF
-			BL RED_ON
-			BL RED_OFF
-			BL BOTH_ON
-			BL BOTH_OFF
 			CPSIE I					;Unmask interrupts from KL46 devices
 ;----------------------------------------------------------------
 			MOVS R2,#0				;Initialize counter
@@ -88,14 +82,14 @@ main
 			LDR R0,=Question1		;Load the first question into R0
 			BL PutStringSB			;Display the first question
 			BL CRLF 				;Enter Key
-			BL DisplayChoices		;Display the choices for the user
-			LDR R1,=Choices			;Load in the memory address of Choice
-			BL GetChar			;Get a character from the user
-			BL PutChar
+			BL DisplayChoices		;Display the choices for the user			
+			BL GetChar				;Get a character from the user
 			;Initializing Timer here
 			LDR R7,=RunStopWatch	;Load in stop watch boolean
 			MOVS R6,#1				;Load a 1 into R6 to set stop watch boolean
 			STRB R6,[R7,#0]			;Move a one into the stop watch to let the count decrement
+			BL PutChar
+			LDR R4,=Choices			;Load in the memory address of Choice
 			BL CheckChoices			;Check to see if choice was valid and convert it
 			BL CRLF					;Carriage Return and Line Feed (equivalent to hitting the enter key)
 			;Second Question
@@ -103,49 +97,49 @@ main
 			BL PutStringSB			;Display the first question
 			BL CRLF 				;Enter Key
 			BL DisplayChoices		;Display the choices for the user
-			LDR R1,=Choices			;Load in the memory address of Choice
 			BL GetChar			;Get a character from the user
 			BL PutChar
+			LDR R4,=Choices			;Load in the memory address of Choice
 			BL CheckChoices			;Check to see if choice was valid and convert it
 			BL CRLF					;Carriage Return and Line Feed (equivalent to hitting the enter key)
 			;Third Question
 			LDR R0,=Question3				;Load the second question into R0
 			BL PutStringSB			;Display the first question
 			BL CRLF 				;Enter Key
-			BL DisplayChoices		;Display the choices for the user
-			LDR R1,=Choices			;Load in the memory address of Choice
+			BL DisplayChoices		;Display the choices for the user		
 			BL GetChar			;Get a character from the user
 			BL PutChar
+			LDR R4,=Choices			;Load in the memory address of Choice
 			BL CheckChoices			;Check to see if choice was valid and convert it
 			BL CRLF					;Carriage Return and Line Feed (equivalent to hitting the enter key)
 			;Fourth Question
 			LDR R0,=Question4				;Load the third question into R0
 			BL PutStringSB			;Display the first question
 			BL CRLF 				;Enter Key
-			BL DisplayChoices		;Display the choices for the user
-			LDR R1,=Choices			;Load in the memory address of Choice
+			BL DisplayChoices		;Display the choices for the user			
 			BL GetChar			;Get a character from the user
 			BL PutChar
+			LDR R4,=Choices			;Load in the memory address of Choice
 			BL CheckChoices			;Check to see if choice was valid and convert it
 			BL CRLF					;Carriage Return and Line Feed
 			;Fifth Question
 			LDR R0,=Question5				;Load the third question into R0
 			BL PutStringSB			;Display the first question
 			BL CRLF 				;Enter Key
-			BL DisplayChoices		;Display the choices for the user
-			LDR R1,=Choices			;Load in the memory address of Choice
+			BL DisplayChoices		;Display the choices for the user			
 			BL GetChar			;Get a character from the user
 			BL PutChar
+			LDR R4,=Choices			;Load in the memory address of Choice
 			BL CheckChoices			;Check to see if choice was valid and convert it
 			BL CRLF					;Carriage Return and Line Feed
 			;Sixth Question
 			LDR R0,=Question6				;Load the third question into R0
 			BL PutStringSB			;Display the first question
 			BL CRLF 				;Enter Key
-			BL DisplayChoices		;Display the choices for the user
-			LDR R1,=Choices			;Load in the memory address of Choice
+			BL DisplayChoices		;Display the choices for the user			
 			BL GetChar			;Get a character from the user
 			BL PutChar
+			LDR R4,=Choices			;Load in the memory address of Choice
 			BL CheckChoices			;Check to see if choice was valid and convert it
 			BL CRLF					;Carriage Return and Line Feed
 			;Seventh Question
@@ -153,29 +147,29 @@ main
 			BL PutStringSB			;Display the first question
 			BL CRLF 				;Enter Key
 			BL DisplayChoices		;Display the choices for the user
-			LDR R1,=Choices			;Load in the memory address of Choice
 			BL GetChar			;Get a character from the user
 			BL PutChar
+			LDR R4,=Choices			;Load in the memory address of Choice
 			BL CheckChoices			;Check to see if choice was valid and convert it
 			BL CRLF					;Carriage Return and Line Feed
 			;Eigth Question
 			LDR R0,=Question8				;Load the third question into R0
 			BL PutStringSB			;Display the first question
 			BL CRLF 				;Enter Key
-			BL DisplayChoices		;Display the choices for the user
-			LDR R1,=Choices			;Load in the memory address of Choice
+			BL DisplayChoices		;Display the choices for the user			
 			BL GetChar			;Get a character from the user
 			BL PutChar
+			LDR R4,=Choices			;Load in the memory address of Choice
 			BL CheckChoices			;Check to see if choice was valid and convert it
 			BL CRLF					;Carriage Return and Line Feed
 			;Ninth Question
 			LDR R0,=Question9				;Load the third question into R0
 			BL PutStringSB			;Display the first question
 			BL CRLF 				;Enter Key
-			BL DisplayChoices		;Display the choices for the user
-			LDR R1,=Choices			;Load in the memory address of Choice
+			BL DisplayChoices		;Display the choices for the user		
 			BL GetChar			;Get a character from the user
 			BL PutChar
+			LDR R4,=Choices			;Load in the memory address of Choice
 			BL CheckChoices			;Check to see if choice was valid and convert it
 			BL CRLF					;Carriage Return and Line Feed
 			;Tenth Question
@@ -183,13 +177,11 @@ main
 			BL PutStringSB			;Display the first question
 			BL CRLF 				;Enter Key
 			BL DisplayChoices		;Display the choices for the user
-			LDR R1,=Choices			;Load in the memory address of Choice
 			BL GetChar			;Get a character from the user
 			BL PutChar
+			LDR R4,=Choices			;Load in the memory address of Choice
 			BL CheckChoices			;Check to see if choice was valid and convert it
 			BL CRLF					;Carriage Return and Line Feed
-			;Give choice
-			BL Decide				;Decide upon the personality type the user is
 			;Stop Counter
 			LDR R7,=RunStopWatch	;Load in stop watch boolean
 			MOVS R6,#0
@@ -204,6 +196,9 @@ main
 			BL PutNumU				;Display time it took to finish the test
 			MOVS R6,#0
 			STR R6,[R7,#0]
+			;Give choice
+			BL Decide				;Decide upon the personality type the user is
+			
 ;>>>>>   end main program code <<<<<
 ;Stay here
 			ENDP 
@@ -327,7 +322,7 @@ Division	BL DIVU					;Call division subroutine
 PopAll		POP {R0}				;Pop remainders into R0	
 			SUBS R3,R3,#1			;Decrement counter by 1 
 			ADDS R0,R0,#0x30		;Add 30 to R0 to convert to ASCII
-			BL PutChar			;Print the value popped
+			BL PutChar				;Print the value popped
 			CMP R3,#0				;Compare counter to 0
 			BEQ EndPutNumU			;Pop R1's contents into R0			
 			B PopAll				;Continue popping all until R3 = 0
@@ -386,19 +381,27 @@ CheckChoices	PROC {R0-R13},{}
 ;R0 = Holds the answer that the user typed.
 ;R1 = Memory address of choice
 ;Outputs: Stores answer choice in memory
-				PUSH {R1}			;Push registers to modify onto stack.
-				CMP R0,#'a'			;Compare input to 'a'
+				PUSH {R1,R4,LR}		;Push registers to modify onto stack.
+checkA			CMP R0,#'a'			;Compare input to 'a'
 				BHS checktheZ		;Checks if input is less than z
-				B endCheckChoices	;If it is not zero, then
-checktheZ		CMP R0,#'z'		 	;Compare input to 'z'
+				B tryAgain			;If it is not zero, then
+checktheZ		CMP R0,#'f'		 	;Compare input to 'f'
 				BLS validLetter	 	;It's valid if in the range
-				BHS endCheckChoices	;If input > 'z,' end the checker
+				BHS tryAgain;If input > 'z,' end the checker
+tryAgain		BL CRLF
+				MOVS R1,#MAX_STRING
+				LDR R0,=invalidChoice
+				BL PutStringSB
+				BL CRLF
+				BL GetChar
+				BL PutChar
+				B checkA
 validLetter		SUBS R0,R0,#0x20 	;Convert to ASCII
-				STRB R0,[R1,#0]		;Store answer choice into memory
-				ADDS R1,R1,#1		;Increment pointer
-endCheckChoices POP {R1}			;Pop saved registers
-				BX LR				;Branch and exchange back to link register
-				ENDP				;End the subroutine
+				STRB R0,[R4,#0]		;Store answer choice into memory
+				ADDS R4,R4,#1		;Increment pointer
+				POP {R1,R4,PC}
+				ENDP
+
 ;---------------------------------------------------------------
 Decide			PROC {R0-R13},{}
 ;This subroutine gives the user their personality type
@@ -524,6 +527,8 @@ NAND DCB 	"D: Neither agree nor diagree",0
 AL DCB		"E: Agree a little",0
 AM DCB 		"F: Agree moderately",0
 AS DCB 		"G: Agree strongly",0
+;Invalid response
+invalidChoice DCB "Invalid choice. Please try again.",0
 ;Personality Types
 ISTJ DCB 	"ISTJ - Logistician",0
 INFJ DCB 	"INFJ - Advocate",0
