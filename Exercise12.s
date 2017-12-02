@@ -82,12 +82,12 @@ main
 			LDR R0,=Question1		;Load the first question into R0
 			BL PutStringSB			;Display the first question
 			BL CRLF 				;Enter Key
-			BL DisplayChoices		;Display the choices for the user			
-			BL GetChar				;Get a character from the user
+			BL DisplayChoices		;Display the choices for the user	
 			;Initializing Timer here
 			LDR R7,=RunStopWatch	;Load in stop watch boolean
 			MOVS R6,#1				;Load a 1 into R6 to set stop watch boolean
-			STRB R6,[R7,#0]			;Move a one into the stop watch to let the count decrement
+			STRB R6,[R7,#0]			;Move a one into the stop watch to let the count decrement		
+			BL GetChar				;Get a character from the user
 			BL PutChar
 			LDR R4,=Choices			;Load in the memory address of Choice
 			BL CheckChoices			;Check to see if choice was valid and convert it
@@ -183,22 +183,35 @@ main
 			BL CheckChoices			;Check to see if choice was valid and convert it
 			BL CRLF					;Carriage Return and Line Feed
 			;Stop Counter
-			LDR R7,=RunStopWatch	;Load in stop watch boolean
+			LDR R0,=RunStopWatch	;Load in stop watch boolean
 			MOVS R6,#0
-			STRB R6,[R7,#0]
+			STRB R6,[R0,#0]
 			;Give total time it took to take the test
 			BL CRLF
-			LDR R0,=Time
+			LDR R0,=TimeT
 			MOVS R1,R5				;
 			BL PutStringSB			;Display time message
-			LDR R7,=Count			;Load count
-			LDR R0,[R7,#0]			;Load value of count into R0
+			LDR R0,=Count			;Load count
+			LDR R1,[R0,#0]			;Load value of count into R0
+			MOVS R0,R1
 			BL PutNumU				;Display time it took to finish the test
-			MOVS R6,#0
-			STR R6,[R7,#0]
+			LDR R0,=Count
+			MOVS R1,#0
+			STR R1,[R0,#0]
+			MOVS R0,#0x20			;SPACE
+			BL PutChar				;Display SPACE
+			MOVS R0,#'x'			;Move a 'x' into R0
+			BL PutChar					;Display 'x'
+			MOVS R0,#0x20			;SPACE
+			BL PutChar					;Display SPACE
+			LDR R0,=TimeP			;Load the time prompt
+			MOVS R1,#MAX_STRING		;Move a string buffer cap into R1
+			BL PutStringSB			;Display "0.01s"
+			BL CRLF					;CR and LF
 			;Give choice
+			LDR R4,=Choices
 			BL Decide				;Decide upon the personality type the user is
-			
+			B .
 ;>>>>>   end main program code <<<<<
 ;Stay here
 			ENDP 
@@ -400,19 +413,19 @@ tryAgain		BL CRLF
 validLetter		
 				SUBS R0,R0,#0x20 	;Convert to ASCII
 				CMP R0,#'A'
-				BEQ green
+				BEQ red
 				CMP R0,#'B'
-				BEQ green
+				BEQ red
 				CMP R0,#'C'
-				BEQ green
+				BEQ red
 				CMP R0,#'D'
 				BEQ both
 				CMP R0,#'E'
-				BEQ red
+				BEQ green
 				CMP R0,#'F'
-				BEQ red
+				BEQ green
 				CMP R0,#'G'
-				BEQ red
+				BEQ green
 green			BL BOTH_OFF		
 				BL GREEN_ON
 				B store
@@ -440,8 +453,8 @@ Decide			PROC {R0-R13},{}
 				MOVS R2,#0
 DecideLoop		CMP R2,#10
 				BEQ EndDecide
-				LDRB R3,[R0,#0]
-				ADDS R2,R2,#1
+				LDRB R3,[R4,#0]
+				ADDS R4,R4,#1
 				CMP R3,#'A'
 				BEQ NoIncrement
 				CMP R3,#'B'
@@ -574,7 +587,8 @@ ESFP DCB 	"ESFP - Entertainer",0
 ;Goodbye Message
 Bye	 DCB 	"Thank you for taking the test! Goodbye now.",0
 ;Time Message
-Time DCB    "Time took to complete this: ",0
+TimeT DCB    "Time took to complete this: ",0
+TimeP DCB "0.01 s",0
 ;>>>>>   end constants here <<<<<		
             ALIGN
 ;****************************************************************

@@ -297,7 +297,7 @@ PIT_ISR				PROC {R0-R13},{}
 ;RunStopWtach is not zero, PIT_ISR increments the word variable Count; otherwise it leaves
 ;Count unchanged. In either case, make sure the ISR clears the interrupt condition before
 ;exiting.
-;					CPSID I							;Mask all interrupts
+					CPSID I							;Mask all interrupts
 					PUSH {LR}						;Push registers to save onto stack
 					LDR R0,=RunStopWatch			;Load &RunStopWatch into R0
 					LDR R0,[R0,#0]					;Load the value of the watch into R0
