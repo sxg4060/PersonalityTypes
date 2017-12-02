@@ -371,6 +371,7 @@ DisplayChoices	PROC {R0-R13},{}
 			BL PutStringSB		;Display the choice
 			BL CRLF				;Enter Key
 			LDR R0,=AS			;Load agree strongly
+			BL PutStringSB		;Display the choice
 			BL CRLF				;Enter Key
 			POP {R0-R1,PC}		;Pop registers
 			ENDP				;End subroutine
@@ -396,8 +397,32 @@ tryAgain		BL CRLF
 				BL GetChar
 				BL PutChar
 				B checkA
-validLetter		SUBS R0,R0,#0x20 	;Convert to ASCII
-				STRB R0,[R4,#0]		;Store answer choice into memory
+validLetter		
+				SUBS R0,R0,#0x20 	;Convert to ASCII
+				CMP R0,#'A'
+				BEQ green
+				CMP R0,#'B'
+				BEQ green
+				CMP R0,#'C'
+				BEQ green
+				CMP R0,#'D'
+				BEQ both
+				CMP R0,#'E'
+				BEQ red
+				CMP R0,#'F'
+				BEQ red
+				CMP R0,#'G'
+				BEQ red
+green			BL BOTH_OFF		
+				BL GREEN_ON
+				B store
+red				BL BOTH_OFF
+				BL RED_ON
+				B store
+both			BL BOTH_OFF
+				BL BOTH_ON
+				B store
+store			STRB R0,[R4,#0]		;Store answer choice into memory
 				ADDS R4,R4,#1		;Increment pointer
 				POP {R1,R4,PC}
 				ENDP
