@@ -282,8 +282,8 @@ LED_PORTE_MASK  EQU LED_RED_MASK
         IMPORT Enqueue
         EXPORT PutChar
         EXPORT GetChar
-		EXPORT PIT_ISR
-		EXPORT Init_PIT_IRQ
+		;EXPORT PIT_ISR
+		;EXPORT Init_PIT_IRQ
 		EXPORT BOTH_ON
 		EXPORT BOTH_OFF
 		EXPORT GREEN_ON
@@ -291,87 +291,7 @@ LED_PORTE_MASK  EQU LED_RED_MASK
 		EXPORT RED_ON
 		EXPORT RED_OFF
         AREA SerialDriver,CODE,READONLY
-;*****************************************************************
-PIT_ISR				PROC {R0-R13},{}
-;Interrupt Service Routine for the PIT module. On a PIT interrupt, if the byte variable
-;RunStopWtach is not zero, PIT_ISR increments the word variable Count; otherwise it leaves
-;Count unchanged. In either case, make sure the ISR clears the interrupt condition before
-;exiting.
-					CPSID I							;Mask all interrupts
-					PUSH {LR}						;Push registers to save onto stack
-					LDR R0,=RunStopWatch			;Load &RunStopWatch into R0
-					LDR R0,[R0,#0]					;Load the value of the watch into R0
-					LDR R1,=Count					;Load &Count into R0
-					LDR R2,[R1,#0]					;Load the value of the Count into R2
-					CMP R0,#0						;Compare watch and 0
-					BEQ ExitStartCount				;If watch stops, stop counting time
-					ADDS R2,R2,#1					;Increment count
-					STR R2,[R1,#0]					;Store the count into R1
-ExitStartCount		LDR R0,=PIT_CH0_BASE			;Load Channel 0 into R0
-					LDR R1,=PIT_TFLG_TIF_MASK		;Load the mask
-					STR R1,[R0,#PIT_TFLG_OFFSET]	;Clear the channel 0 interrupts
-					CPSIE I							;Unmask all interrupts
-					POP {PC}						;Pop PC	
-					ENDP							;End the process
-;----------------------------------------------------------------------------------
-Init_PIT_IRQ		PROC {R0-R13},{}
-;Initialize the PIT to generate an interrupt every 0.01s from PIT channel 0.
 
-;Set SIM_CGC6 for PIT Clock Enabled
-					PUSH {R0-R3}					;Push register to save onto stack
-					LDR R0,=Count					;Load &count into R0
-					LDR R1,=RunStopWatch			;Load &RunStopWatch into R0
-					LDR R2,[R0,#0]					;R2 <- *Count
-					LDRB R3,[R1,#0]					;R3 <- *RunStopWatch
-					MOVS R2,#0						;Set count to 0
-					MOVS R3,#0						;Set RunStopWatch to 0
-					STR R2,[R0,#0]					;Store new value into &Count
-					STRB R3,[R0,#0]					;Store new value into &RunStopWatch
-;Start PIT IRq					
-					LDR R0,=SIM_SCGC6				;Load SIM_SCGC6 address into R0
-					LDR R1,=SIM_SCGC6_PIT_MASK		;Load SCGC6_MASK into R1
-					LDR R2,[R0,#0]					;Load the value of the SIM_SCGC6 address into R2
-					ORRS R2,R2,R1					;Set the SIM_SCGC6 with the mask
-					STR R2,[R0,#0]					;Store set SIM_SCGC6 into R2
-;PIT Modyle Control Register (32 bits)
-					LDR R0,=PIT_BASE				;Load PIT_BASE into R0
-					LDR R1,=PIT_MCR_EN_FRZ			;Load PIT_MCR_EN_FRZ
-					STR R1,[R0,#PIT_MCR_OFFSET]		;Store FRZ into BASE with MCR_OFFSET
-;PIT Timer Load Value Register (32 bits)
-					LDR R0,=PIT_CH0_BASE			;Load channel 0 into R0 
-					LDR R1,=PIT_LDVAL_10ms			;Load TSV into R1
-					STR R1,[R0,#PIT_LDVAL_OFFSET]	;Store TSV in Channel 0 for timer start value of 239,999
-;Enable PIT timer channel 0 for interrupts
-					LDR R0,=PIT_CH0_BASE			;Load channel 0 into R0
-					MOVS R1,#PIT_TCTRL_CH_IE		;Move PIT_TCTRL into R1
-					STR R1,[R0,#PIT_TCTRL_OFFSET]	;Store PIT_TCTRL into CH0
-;Initialize PIT Interrupts in NVIC
-
-;Unmask PIT interrupts
-					LDR R0,=NVIC_ISER				;R0 = &NVIC_ISER 
-					LDR R1,=PIT_IRQ_MASK			;R1 = &PIT_IRQ_MASK
-					STR R1,[R0,#0]					;R0 = PIT_IRQ MASK
-;Set PIT interrupt priority	
-					LDR R0,=PIT_IPR					;R0 = &PIT_IPR
-					LDR R1,=(NVIC_IPR_PIT_MASK)		;R1 = &NVIC_IPR_PIT_MASK
-					;LDR  R2,=(PIT_IRQ_PRI << PIT_PRI_POS)	
-					LDR R3,[R0,#0]					;R3 = *PIT_IPR
-					BICS R3,R3,R1					;R3 = R3 & ~R1
-					;ORRS R3,R3,R2
-					;ASK DR. MELTON ABOUT PRIORITY R3 or R1 to be stored into R0 (LOOK AT SLIDES)
-					STR R3,[R0,#0]					;Set PIT interrupt priority
-					
-;Channel 0 Interrupt Condition
-
-;Clear PIT Channel 0 interrupt
-					LDR R0,=PIT_CH0_BASE			;Load channel 0 into R0
-					LDR R1,=PIT_TFLG_TIF_MASK		;Load the TFLG into R1
-					STR R1,[R0,#PIT_TFLG_OFFSET]	;Clear the PIT Channel 0 interrupt
-;End the Init_PIT_IRQ
-					POP {R0-R3}						;Pop saved registers
-					BX LR							;Branch and exhange link register	
-					ENDP							;End the subroutine
-;-----------------------------------------------------------------
 UART0_IRQHandler			PROC {R0-R13},{}
 ;Interrupt Service Routine
 			CPSID I									;Mask all interrupts
