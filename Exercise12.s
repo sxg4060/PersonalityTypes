@@ -680,25 +680,13 @@ DisplayChoices	PROC {R0-R13},{}
 			PUSH {R0-R1,LR}		;Push registers to modify into stack
 			MOVS R1,#MAX_STRING	;Set a buffer capacity
 			BL CRLF				;Enter Key
-			LDR R0,=DS			;Load Strongly Disagree choice
+			LDR R0,=Yes			;Load Strongly Disagree choice
 			BL PutStringSB		;Display the choice
 			BL CRLF				;Enter Key
-			LDR R0,=DM			;Load Disagree moderately
+			LDR R0,=Unsure			;Load Disagree moderately
 			BL PutStringSB		;Display the choice
 			BL CRLF				;Enter Key
-			LDR R0,=DL			;Load Disagree a little
-			BL PutStringSB		;Display the choice
-			BL CRLF				;Enter Key
-			LDR R0,=NAND		;Load neither agree nor disagree prompt
-			BL PutStringSB		;Display the choice
-			BL CRLF				;Enter Key
-			LDR R0,=AL			;Load agree a little prompt
-			BL PutStringSB		;Display the choice
-			BL CRLF				;Enter Key
-			LDR R0,=AM			;Load agree moderately choice
-			BL PutStringSB		;Display the choice
-			BL CRLF				;Enter Key
-			LDR R0,=AS			;Load agree strongly
+			LDR R0,=No			;Load Disagree a little
 			BL PutStringSB		;Display the choice
 			BL CRLF				;Enter Key
 			POP {R0-R1,PC}		;Pop registers
@@ -862,24 +850,19 @@ __Vectors_Size  EQU     __Vectors_End - __Vectors
 ;Welcome Message
 Welcome DCB "Welcome to the personality test! Let's begin!",0
 ;Questions
-Question1	DCB		"I see myself as extraverted, enthusiatic.",0
-Question2	DCB		"I see myself as critical, quarrelsome.",0
+Question1	DCB		"I see myself as enthusiastic.",0
+Question2	DCB		"I love going out!",0
 Question3	DCB		"I see myself as dependable, self-disciplined.",0
 Question4	DCB		"I see myself as anxious, easily upset.",0
 Question5	DCB		"I see myself as open to new experiences, complex.",0
 Question6	DCB		"I see myself as reserved, quiet.",0
 Question7	DCB		"I see myself as sympathetic, warm.",0
 Question8	DCB		"I see myself as disorganized, careless.",0
-Question9	DCB		"I see myself as calm, emotionally stable.",0
-Question10  DCB		"I see myself as conventional, uncreative.",0
+
 ;Choices per question
-DS	DCB 	"A: Disagree Strongly",0
-DM	DCB 	"B: Disagree Moderately",0
-DL	DCB		"C: Disagree a little",0
-NAND DCB 	"D: Neither agree nor diagree",0
-AL DCB		"E: Agree a little",0
-AM DCB 		"F: Agree moderately",0
-AS DCB 		"G: Agree strongly",0
+Yes 		DCB "Yes",0
+Unsure 		DCB "Unsure",0
+No 			DCB "No",0
 ;Invalid response
 invalidChoice DCB "Invalid choice. Please try again.",0
 ;Personality Types
