@@ -430,38 +430,46 @@ rep			LDR R0,=Question1		;Load the first question into R0
 			BL CRLF					;CR and LF
 			;Give choice
 			LDR R4,=Choices			;Load in all the choices
-			LDR R0,=List
-			MOVS R1,R5
-			BL PutStringSB
-			MOVS R7,#0
-loopC		CMP R7,#8
-			BEQ decision
-			LDRB R0,[R4,R7]
-			ADDS R7,R7,#1
-			BL PutChar
-			B loopC
-decision	BL CRLF
-			LDR R0,=Repeat
-			BL PutStringSB
-			BL GetChar
-			CMP R0,#'y'
-			BEQ yes
-			CMP R0,#'Y'
-			BEQ yes
-			CMP R0,#'n'
-			BEQ no
-			CMP R0,#'N'
-			BEQ no
-yes			BL CRLF
-			B rep
-no			BL CRLF
-			LDR R0,=Decision
-			BL PutStringSB
+			LDR R0,=List			;Load in list of choices prompt
+			MOVS R1,R5				;Move in MAX_STRING	
+			BL PutStringSB			;Display choices prompt
+			MOVS R7,#0				;Counter for size of choices array
+loopC		CMP R7,#8				;Compare R7 to size
+			BEQ decision			;Branch if equal to Decision
+			LDRB R0,[R4,R7]			;Load in choice
+			ADDS R7,R7,#1			;Increment counter
+			BL PutChar				;Display choice
+			B loopC					;keep looping
+decision	BL CRLF					;New Line
+			LDR R0,=Repeat			;Check to see if choices are okay
+invalidState BL PutStringSB			;Display prompt
+			BL GetChar				;Recieve character
+			CMP R0,#'y'				;Check if 'y'
+			BEQ yes					;yes
+			CMP R0,#'Y'				;Check if 'Y'
+			BEQ yes					;yes
+			CMP R0,#'n'				;Check if 'n'
+			BEQ no					;no
+			CMP R0,#'N'				;Check if 'N'
+			BEQ no					;no
+			B invalidState			;If invalid, then loop again for response
+yes			BL CRLF					;New Line
+			B rep					;Repeat test
+no			BL CRLF					;New Line
+			LDR R0,=Decision		;Load in decision prompt
+			BL PutStringSB			;Display decision prompt
 			BL DecideEI				;Decide upon Extraverted/Intraverted
 			BL DecideSN				;Decide upon Sensing/Intuition
 			BL DecideTF				;Decide upon thinking/feeling
 			BL DecideJP				;Decide upon judging/percieving 
-			
+			PUSH {R1}				;Push score
+			BL CRLF					;Carriage Return and Line Feed
+			LDR R0,=Score			;Score prompt
+			MOVS R1,R5				;Move R5 into R1 (MAX_STRING)
+			BL PutStringSB			;Display score prompt
+			POP {R1}				;Pop R1
+			MOVS R0,R1				;Move R1 into R0
+			BL PutNumU				;Display score
 			B .						;End test
 ;>>>>>   end main program code <<<<<
 ;Stay here
@@ -1061,6 +1069,8 @@ TimeT DCB    "Time took to complete this: ",0
 TimeP DCB "0.01 s",0
 ;Decision
 Decision DCB "You are: ",0
+;Score
+Score DCB "Score = ",0
 ;>>>>>   end constants here <<<<<		
             ALIGN
 ;****************************************************************
