@@ -35,6 +35,16 @@ Q_REC_SZ EQU 18 ;Management record size
 OneByte	EQU 4
 MAX_STRING EQU 79
 ;----------------------------------------------------------------
+;MACRO
+		MACRO
+$Label 	CRLF $Ri
+		PUSH {$Ri,LR}
+		MOVS $Ri,#CR	;Carraige Return
+		BL PutChar		;Display carraige return
+		MOVS $Ri,#LF	;Line feed
+		BL PutChar		;Display line feed
+		POP {$Ri,LR}
+		MEND
 ;---------------------------------------------------------------
 ;NVIC_ICER
 ;31-00:CLRENA=masks for HW IRQ sources;
@@ -285,7 +295,6 @@ UART0_C2_TI_RI  EQU  (UART0_C2_TIE_MASK :OR: UART0_C2_T_RI)
 			IMPORT Init_UART0_IRQ
 			IMPORT GetChar
 			IMPORT PutChar
-			
 			IMPORT BOTH_ON
 			IMPORT BOTH_OFF
 			IMPORT GREEN_ON
@@ -296,9 +305,9 @@ Reset_Handler  PROC  {},{}
 main
 ;---------------------------------------------------------------
 ;Mask interrupts
-            CPSID   I
+            CPSID   I				;Mask all interrupts
 ;KL46 system startup with 48-MHz system clock
-            BL      Startup
+            BL      Startup			;Set all registers
 ;---------------------------------------------------------------
 ;>>>>> begin main program code <<<<<
 
@@ -309,7 +318,7 @@ main
 			LDR R0,=Welcome			;Load the welcome message into R0
 			MOVS R5,#MAX_STRING		;Load in a buffer capacity for the string
 			BL PutStringSB			;Display the welcome message on the terminal			
-			BL CRLF					;Carriage Return and Line Feed (equivalent to hitting the enter key)
+			BL CRLF 					;Carriage Return and Line Feed (equivalent to hitting the enter key)
 			;First Question
 			LDR R0,=Question1		;Load the first question into R0
 			BL PutStringSB			;Display the first question
@@ -325,115 +334,112 @@ main
 			BL CheckChoices			;Check to see if choice was valid and convert it
 			BL CRLF					;Carriage Return and Line Feed (equivalent to hitting the enter key)
 			;Second Question
-			LDR R0,=Question2				;Load the first question into R0
+			LDR R0,=Question2		;Load the first question into R0
 			BL PutStringSB			;Display the first question
 			BL CRLF 				;Enter Key
 			BL DisplayChoices		;Display the choices for the user
-			BL GetChar			;Get a character from the user
+			BL GetChar				;Get a character from the user
 			BL PutChar
-			;LDR R4,=Choices			;Load in the memory address of Choice
+			;LDR R4,=Choices		;Load in the memory address of Choice
 			BL CheckChoices			;Check to see if choice was valid and convert it
 			BL CRLF					;Carriage Return and Line Feed (equivalent to hitting the enter key)
 			;Third Question
-			LDR R0,=Question3				;Load the second question into R0
+			LDR R0,=Question3		;Load the second question into R0
 			BL PutStringSB			;Display the first question
 			BL CRLF 				;Enter Key
 			BL DisplayChoices		;Display the choices for the user		
-			BL GetChar			;Get a character from the user
+			BL GetChar				;Get a character from the user
 			BL PutChar
-			;LDR R4,=Choices			;Load in the memory address of Choice
+			;LDR R4,=Choices		;Load in the memory address of Choice
 			BL CheckChoices			;Check to see if choice was valid and convert it
 			BL CRLF					;Carriage Return and Line Feed (equivalent to hitting the enter key)
 			;Fourth Question
-			LDR R0,=Question4				;Load the third question into R0
+			LDR R0,=Question4		;Load the third question into R0
 			BL PutStringSB			;Display the first question
 			BL CRLF 				;Enter Key
 			BL DisplayChoices		;Display the choices for the user			
-			BL GetChar			;Get a character from the user
+			BL GetChar				;Get a character from the user
 			BL PutChar
-			;LDR R4,=Choices			;Load in the memory address of Choice
+			;LDR R4,=Choices		;Load in the memory address of Choice
 			BL CheckChoices			;Check to see if choice was valid and convert it
 			BL CRLF					;Carriage Return and Line Feed
 			;Fifth Question
-			LDR R0,=Question5				;Load the third question into R0
+			LDR R0,=Question5		;Load the third question into R0
 			BL PutStringSB			;Display the first question
 			BL CRLF 				;Enter Key
 			BL DisplayChoices		;Display the choices for the user			
-			BL GetChar			;Get a character from the user
+			BL GetChar				;Get a character from the user
 			BL PutChar
-			;LDR R4,=Choices			;Load in the memory address of Choice
+			;LDR R4,=Choices		;Load in the memory address of Choice
 			BL CheckChoices			;Check to see if choice was valid and convert it
 			BL CRLF					;Carriage Return and Line Feed
 			;Sixth Question
-			LDR R0,=Question6				;Load the third question into R0
+			LDR R0,=Question6		;Load the third question into R0
 			BL PutStringSB			;Display the first question
 			BL CRLF 				;Enter Key
 			BL DisplayChoices		;Display the choices for the user			
-			BL GetChar			;Get a character from the user
+			BL GetChar				;Get a character from the user
 			BL PutChar
-			;LDR R4,=Choices			;Load in the memory address of Choice
+			;LDR R4,=Choices		;Load in the memory address of Choice
 			BL CheckChoices			;Check to see if choice was valid and convert it
 			BL CRLF					;Carriage Return and Line Feed
 			;Seventh Question
-			LDR R0,=Question7				;Load the third question into R0
+			LDR R0,=Question7		;Load the third question into R0
 			BL PutStringSB			;Display the first question
 			BL CRLF 				;Enter Key
 			BL DisplayChoices		;Display the choices for the user
-			BL GetChar			;Get a character from the user
+			BL GetChar				;Get a character from the user
 			BL PutChar
-			;LDR R4,=Choices			;Load in the memory address of Choice
+			;LDR R4,=Choices		;Load in the memory address of Choice
 			BL CheckChoices			;Check to see if choice was valid and convert it
 			BL CRLF					;Carriage Return and Line Feed
 			;Eigth Question
-			LDR R0,=Question8				;Load the third question into R0
+			LDR R0,=Question8		;Load the third question into R0
 			BL PutStringSB			;Display the first question
 			BL CRLF 				;Enter Key
 			BL DisplayChoices		;Display the choices for the user			
-			BL GetChar			;Get a character from the user
+			BL GetChar				;Get a character from the user
 			BL PutChar
-			;LDR R4,=Choices			;Load in the memory address of Choice
+			;LDR R4,=Choices		;Load in the memory address of Choice
 			BL CheckChoices			;Check to see if choice was valid and convert it
 			BL CRLF					;Carriage Return and Line Feed
 			;Stop Counter
 			LDR R0,=RunStopWatch	;Load in stop watch boolean
-			MOVS R6,#0
-			STRB R6,[R0,#0]
+			MOVS R6,#0				;Move a 0 into R6
+			STRB R6,[R0,#0]			;Turn off PIT Timer
 			;Give total time it took to take the test
-			BL CRLF
-			LDR R0,=TimeT
-			MOVS R1,R5				;
+			BL CRLF					;Carriage Return and Line Feed
+			LDR R0,=TimeT			;Load in time display
+			MOVS R1,R5				;Move R5,R1
 			BL PutStringSB			;Display time message
 			LDR R7,=Count			;Load count
 			LDR R1,[R7,#0]			;Load value of count into R0
-			MOVS R0,R1
+			MOVS R0,R1				;Movs R1 into R0
 			BL PutNumU				;Display time it took to finish the test
-			LDR R0,=Count
-			MOVS R1,#0
-			STR R1,[R0,#0]
+			LDR R0,=Count			;Load in &Count
+			MOVS R1,#0				;Move 0 into R1
+			STR R1,[R0,#0]			;Reset counter
 			MOVS R0,#0x20			;SPACE
 			BL PutChar				;Display SPACE
 			MOVS R0,#'x'			;Move a 'x' into R0
-			BL PutChar					;Display 'x'
+			BL PutChar				;Display 'x'
 			MOVS R0,#0x20			;SPACE
-			BL PutChar					;Display SPACE
+			BL PutChar				;Display SPACE
 			LDR R0,=TimeP			;Load the time prompt
 			MOVS R1,#MAX_STRING		;Move a string buffer cap into R1
 			BL PutStringSB			;Display "0.01s"
 			BL CRLF					;CR and LF
 			;Give choice
-			LDR R4,=Choices
+			LDR R4,=Choices			;Load in all the choices
 			BL DecideEI				;Decide upon Extraverted/Intraverted
-			;BL CRLF
-			BL DecideSN
-			;BL CRLF
-			BL DecideTF
-			;BL CRLF
-			BL DecideJP
-			B .
+			BL DecideSN				;Decide upon Sensing/Intuition
+			BL DecideTF				;Decide upon thinking/feeling
+			BL DecideJP				;Decide upon judging/percieving 
+			B .						;End test
 ;>>>>>   end main program code <<<<<
 ;Stay here
-			ENDP 
-			LTORG	
+			ENDP 					;End Main
+			LTORG					;LTORG for far branching
 ;----------------------------------------------------------------------------------
 ;>>>>> begin subroutine code <<<<<
 ;*****************************************************************
@@ -515,16 +521,18 @@ Init_PIT_IRQ		PROC {R0-R13},{}
 					POP {R0-R3}						;Pop saved registers
 					BX LR							;Branch and exhange link register	
 					ENDP							;End the subroutine
-;-----------------------------------------------------------------
 ;----------------------------------------------------------------------------------
 CRLF				PROC {R0-R13},{}
-					PUSH {R0,LR}
-					MOVS R0,#CR
-					BL PutChar
-					MOVS R0,#LF
-					BL PutChar
-					POP {R0,PC}
-					ENDP
+;Carriage Return and Line Feed subroutine
+;Input: R0
+;Output: New Line
+					PUSH {R0,LR}	;Push saved registers
+					MOVS R0,#CR		;Carraige Return
+					BL PutChar		;Display carraige return
+					MOVS R0,#LF		;Line feed
+					BL PutChar		;Display line feed
+					POP {R0,PC}		;Pop saved registers
+					ENDP			;End subroutine
 ;-----------------------------------------------------------------------------------
 GetStringSB PROC {R0-R13},{}
 ;GetStringSB is a subroutine that reads a string
@@ -682,48 +690,48 @@ CheckChoices	PROC {R0-R13},{}
 ;R0 = Holds the answer that the user typed.
 ;R1 = Memory address of choice
 ;Outputs: Stores answer choice in memory
-				PUSH {R1,LR}		;Push registers to modify onto stack.
-				CMP R0,#'A'
-				BEQ green
-				CMP R0,#'B'
-				BEQ both
-				CMP R0,#'C'
-				BEQ red
-checkA			CMP R0,#'a'			;Compare input to 'a'
-				BHS checktheZ		;Checks if input is less than z
-				B tryAgain			;If it is not zero, then
-checktheZ		CMP R0,#'c'		 	;Compare input to 'f'
-				BLS validLetter	 	;It's valid if in the range
-				BHS tryAgain		;If input > 'z,' end the checker
-tryAgain		BL CRLF
-				MOVS R1,#MAX_STRING
-				LDR R0,=invalidChoice
-				BL PutStringSB
-				BL CRLF
-				BL GetChar
-				BL PutChar
-				B checkA
+				PUSH {R1,LR}		    ;Push registers to modify onto stack.
+				CMP R0,#'A'			    ;Check if answer is 'A'
+				BEQ green			    ;Light green LED
+				CMP R0,#'B'			    ;Check if answer is 'B'
+				BEQ both			    ;Light both red and green LEDs
+				CMP R0,#'C'			    ;Check if answer is 'C'
+				BEQ red				    ;Light red LED
+checkA			CMP R0,#'a'			    ;Compare input to 'a'
+				BHS checktheZ		    ;Checks if input is less than z
+				B tryAgain			    ;If it is not zero, then
+checktheZ		CMP R0,#'c'		 		;Compare input to 'f'
+				BLS validLetter	 		;It's valid if in the range
+				BHS tryAgain			;If input > 'z,' end the checker
+tryAgain		BL CRLF					;New Line
+				MOVS R1,#MAX_STRING		;Set a size limit for MAX_STRING
+				LDR R0,=invalidChoice	;Load in invalid choice prompt
+				BL PutStringSB			;Display prompt
+				BL CRLF					;New line
+				BL GetChar				;Get another character
+				BL PutChar				;Display that character
+				B checkA				;Check again to see if it is valid
 validLetter		
-				SUBS R0,R0,#0x20 	;Convert to ASCII
-				CMP R0,#'A'
-				BEQ green
-				CMP R0,#'B'
-				BEQ both
-				CMP R0,#'C'
-				BEQ red
-green			BL BOTH_OFF		
-				BL GREEN_ON
-				B store
-red				BL BOTH_OFF
-				BL RED_ON
-				B store
-both			BL BOTH_OFF
-				BL BOTH_ON
-				B store
-store			STRB R0,[R4,#0]		;Store answer choice into memory
-				ADDS R4,R4,#1		;Increment pointer
-				POP {R1,PC}
-				ENDP
+				SUBS R0,R0,#0x20 		;Convert to ASCII
+				CMP R0,#'A'				;Check if 'A' is the answer
+				BEQ green				;Branch if equal to green
+				CMP R0,#'B'				;Check if 'B' is the answer
+				BEQ both				;Branch if equal to both 
+				CMP R0,#'C'				;Check if 'C' is the answer
+				BEQ red					;Branch if equal to red
+green			BL BOTH_OFF				;Turn LED's off
+				BL GREEN_ON				;Turn green LED on
+				B store					;Store choice
+red				BL BOTH_OFF				;Turn LED's off
+				BL RED_ON				;Turn RED LED on
+				B store					;Store choice
+both			BL BOTH_OFF				;Turn LED's off
+				BL BOTH_ON				;Turn both
+				B store					;Store choice
+store			STRB R0,[R4,#0]			;Store answer choice into memory
+				ADDS R4,R4,#1			;Increment pointer
+				POP {R1,PC}				;Pop R1 and PC
+				ENDP					;End Process
 
 ;---------------------------------------------------------------
 DecideEI		PROC {R0-R13},{}
@@ -734,46 +742,46 @@ DecideEI		PROC {R0-R13},{}
 ;R2 = Counter for Size of Array
 ;Outputs:
 ;R0 = Your personality type
-				PUSH {LR}
-				MOVS R1,#0
-				MOVS R2,#0
-EI				CMP R2,#2
-				BEQ EndDecideEI
-				LDRB R3,[R4,R2]
-				ADDS R4,R4,#1
-				CMP R3,#'A'
-				BEQ IncrementEI
-				CMP R3,#'B'
-				BEQ NoIncrementEI
-				CMP R3,#'C'
-				BEQ DecrementEI
-NoIncrementEI	ADDS R2,R2,#1
-				B EI
+				PUSH {LR}				;Push saved registers
+				MOVS R1,#0				;Reset score
+				MOVS R2,#0				;Reset counter
+EI				CMP R2,#2				;Set loop condition
+				BEQ EndDecideEI			;Decide the choice 
+				LDRB R3,[R4,R2]			;Load in first value
+				ADDS R4,R4,#1			;Increment pointer
+				CMP R3,#'A'				;Check if choice was 'A'
+				BEQ IncrementEI			;Increment 
+				CMP R3,#'B'				;Check if choice was 'B'
+				BEQ NoIncrementEI		;Do nothing
+				CMP R3,#'C'				;Check if choice was 'C'
+				BEQ DecrementEI			;Decrement
+NoIncrementEI	ADDS R2,R2,#1			;Increment index
+				B EI					;Loop again
 				
-IncrementEI		ADDS R1,R1,#1
-				ADDS R2,R2,#1
-				B EI
-DecrementEI		SUBS R1,R1,#1
-				ADDS R2,R2,#1
-				B EI
+IncrementEI		ADDS R1,R1,#1			;Increment score
+				ADDS R2,R2,#1			;Increment pointer
+				B EI					;Loop
+DecrementEI		SUBS R1,R1,#1			;Decrement score
+				ADDS R2,R2,#1			;Increment pointer
+				B EI					;Loop
 
-EndDecideEI		CMP R1,#0
-				BGT Extra
-				BLT Intra
-				BEQ UnknownEI
-Extra			MOVS R0,#'E'
-				BL PutChar
-				B EndEI
-Intra			MOVS R0,#'I'
-				BL PutChar
-				B EndEI
-UnknownEI		PUSH {R1}
-				MOVS R1,#MAX_STRING
-				LDR R0,=TooClose
-				BL PutStringSB
-				POP {R1}
-EndEI			POP {PC}
-				ENDP
+EndDecideEI		CMP R1,#0				;Compare score against 0
+				BGT Extra				;Check if greater than
+				BLT Intra				;Check if less than
+				BEQ UnknownEI			;Check if equal
+Extra			MOVS R0,#'E'			;Give letter result
+				BL PutChar				;Display result	
+				B EndEI					;End sub
+Intra			MOVS R0,#'I'			;Give letter result
+				BL PutChar				;Display result
+				B EndEI					;End sub
+UnknownEI		PUSH {R1}				;Store R1
+				MOVS R1,#MAX_STRING		;R1 <- MAX_STRING
+				LDR R0,=TooClose		;Load in too close to call prompt
+				BL PutStringSB			;Display the string
+				POP {R1}				;Pop R1
+EndEI			POP {PC}				;Pop PC
+				ENDP					;End Subroutine
 ;----------------------------------------------------------------
 DecideSN		PROC {R0-R13},{}
 ;This subroutine gives the user an extraverted or intraverted response
@@ -783,46 +791,46 @@ DecideSN		PROC {R0-R13},{}
 ;R2 = Counter for Size of Array
 ;Outputs:
 ;R0 = Your personality type
-				PUSH {LR}
-				MOVS R1,#0
-				MOVS R2,#0
-SN				CMP R2,#2
-				BEQ EndDecideSN
-				LDRB R3,[R4,R2]
-				ADDS R4,R4,#1
-				CMP R3,#'A'
-				BEQ IncrementSN
-				CMP R3,#'B'
-				BEQ NoIncrementSN
-				CMP R3,#'C'
-				BEQ DecrementSN
-NoIncrementSN	ADDS R2,R2,#1
-				B SN
-				
-IncrementSN		ADDS R1,R1,#1
-				ADDS R2,R2,#1
-				B SN
-DecrementSN		SUBS R1,R1,#1
-				ADDS R2,R2,#1
-				B SN
-
-EndDecideSN		CMP R1,#0
-				BGT Sense
-				BLT Intuition
-				BEQ UnknownSN
-Sense			MOVS R0,#'S'
-				BL PutChar
-				B EndSN
-Intuition		MOVS R0,#'N'
-				BL PutChar
-				B EndSN
-UnknownSN		PUSH {R1}
-				MOVS R1,#MAX_STRING
-				LDR R0,=TooClose
-				BL PutStringSB
-				POP {R1}
-EndSN			POP {PC}
-				ENDP
+				PUSH {LR}				;Push saved registers
+				MOVS R1,#0              ;Reset score
+				MOVS R2,#0              ;Reset counter
+SN				CMP R2,#2               ;Set loop condition
+				BEQ EndDecideSN         ;Decide the choice 
+				LDRB R3,[R4,R2]         ;Load in first value
+				ADDS R4,R4,#1           ;Increment pointer
+				CMP R3,#'A'             ;Check if choice was 'A'
+				BEQ IncrementSN         ;Increment 
+				CMP R3,#'B'             ;Check if choice was 'B'
+				BEQ NoIncrementSN       ;Do nothing
+				CMP R3,#'C'             ;Check if choice was 'C'
+				BEQ DecrementSN         ;Decrement
+NoIncrementSN	ADDS R2,R2,#1           ;Increment index
+				B SN                    ;Loop again
+				                        
+IncrementSN		ADDS R1,R1,#1           ;Increment score
+				ADDS R2,R2,#1           ;Increment pointer
+				B SN                    ;Loop
+DecrementSN		SUBS R1,R1,#1           ;Decrement score
+				ADDS R2,R2,#1           ;Increment pointer
+				B SN                    ;Loop
+                                        
+EndDecideSN		CMP R1,#0               ;Compare score against 0
+				BGT Sense               ;Check if greater than
+				BLT Intuition           ;Check if less than
+				BEQ UnknownSN           ;Check if equal
+Sense			MOVS R0,#'S'            ;Give letter result
+				BL PutChar              ;Display result	
+				B EndSN                 ;End sub
+Intuition		MOVS R0,#'N'            ;Give letter result
+				BL PutChar              ;Display result
+				B EndSN                 ;End sub
+UnknownSN		PUSH {R1}               ;Store R1
+				MOVS R1,#MAX_STRING     ;R1 <- MAX_STRING
+				LDR R0,=TooClose        ;Load in too close to cal
+				BL PutStringSB          ;Display the string
+				POP {R1}                ;Pop R1
+EndSN			POP {PC}                ;Pop PC
+				ENDP                    ;End Subroutine
 ;----------------------------------------------------------------
 DecideTF		PROC {R0-R13},{}
 ;This subroutine gives the user an extraverted or intraverted response
@@ -832,46 +840,46 @@ DecideTF		PROC {R0-R13},{}
 ;R2 = Counter for Size of Array
 ;Outputs:
 ;R0 = Your personality type
-				PUSH {LR}
-				MOVS R1,#0
-				MOVS R2,#0
-TF				CMP R2,#2
-				BEQ EndDecideTF
-				LDRB R3,[R4,R2]
-				ADDS R4,R4,#1
-				CMP R3,#'A'
-				BEQ IncrementTF
-				CMP R3,#'B'
-				BEQ NoIncrementTF
-				CMP R3,#'C'
-				BEQ DecrementTF
-NoIncrementTF	ADDS R2,R2,#1
-				B TF
-				
-IncrementTF		ADDS R1,R1,#1
-				ADDS R2,R2,#1
-				B TF
-DecrementTF		SUBS R1,R1,#1
-				ADDS R2,R2,#1
-				B TF
-
-EndDecideTF		CMP R1,#0
-				BGT Think
-				BLT Feel
-				BEQ UnknownTF
-Think			MOVS R0,#'T'
-				BL PutChar
-				B EndTF
-Feel			MOVS R0,#'F'
-				BL PutChar
-				B EndTF
-UnknownTF		PUSH {R1}
-				MOVS R1,#MAX_STRING
-				LDR R0,=TooClose
-				BL PutStringSB
-				POP {R1}
-EndTF			POP {PC}
-				ENDP
+				PUSH {LR}				;Push saved registers
+				MOVS R1,#0              ;Reset score
+				MOVS R2,#0              ;Reset counter
+TF				CMP R2,#2               ;Set loop condition
+				BEQ EndDecideTF         ;Decide the choice 
+				LDRB R3,[R4,R2]         ;Load in first value
+				ADDS R4,R4,#1           ;Increment pointer
+				CMP R3,#'A'             ;Check if choice was 'A'
+				BEQ IncrementTF         ;Increment 
+				CMP R3,#'B'             ;Check if choice was 'B'
+				BEQ NoIncrementTF       ;Do nothing
+				CMP R3,#'C'             ;Check if choice was 'C'
+				BEQ DecrementTF         ;Decrement
+NoIncrementTF	ADDS R2,R2,#1           ;Increment index
+				B TF                    ;Loop again
+				                        
+IncrementTF		ADDS R1,R1,#1           ;Increment score
+				ADDS R2,R2,#1           ;Increment pointer
+				B TF                    ;Loop
+DecrementTF		SUBS R1,R1,#1           ;Decrement score
+				ADDS R2,R2,#1           ;Increment pointer
+				B TF                    ;Loop
+                                        
+EndDecideTF		CMP R1,#0               ;Compare score against 0
+				BGT Think               ;Check if greater than
+				BLT Feel                ;Check if less than
+				BEQ UnknownTF           ;Check if equal
+Think			MOVS R0,#'T'            ;Give letter result
+				BL PutChar              ;Display result	
+				B EndTF                 ;End sub
+Feel			MOVS R0,#'F'            ;Give letter result
+				BL PutChar              ;Display result
+				B EndTF                 ;End sub
+UnknownTF		PUSH {R1}               ;Store R1
+				MOVS R1,#MAX_STRING     ;R1 <- MAX_STRING
+				LDR R0,=TooClose        ;Load in too close to cal
+				BL PutStringSB          ;Display the string
+				POP {R1}                ;Pop R1
+EndTF			POP {PC}                ;Pop PC
+				ENDP                    ;End Subroutine
 ;----------------------------------------------------------------
 DecideJP		PROC {R0-R13},{}
 ;This subroutine gives the user an extraverted or intraverted response
@@ -881,46 +889,46 @@ DecideJP		PROC {R0-R13},{}
 ;R2 = Counter for Size of Array
 ;Outputs:
 ;R0 = Your personality type
-				PUSH {LR}
-				MOVS R1,#0
-				MOVS R2,#0
-JP				CMP R2,#8
-				BEQ EndDecideJP
-				LDRB R3,[R4,R2]
-				ADDS R4,R4,#1
-				CMP R3,#'A'
-				BEQ IncrementJP
-				CMP R3,#'B'
-				BEQ NoIncrementJP
-				CMP R3,#'C'
-				BEQ DecrementJP
-NoIncrementJP	ADDS R2,R2,#1
-				B JP
-				
-IncrementJP		ADDS R1,R1,#1
-				ADDS R2,R2,#1
-				B JP
-DecrementJP		SUBS R1,R1,#1
-				ADDS R2,R2,#1
-				B JP
-
-EndDecideJP		CMP R1,#0
-				BGT Judge
-				BLT Percieve
-				BEQ UnknownJP
-Judge			MOVS R0,#'J'
-				BL PutChar
-				B EndJP
-Percieve		MOVS R0,#'P'
-				BL PutChar
-				B EndJP
-UnknownJP		PUSH {R1}
-				MOVS R1,#MAX_STRING
-				LDR R0,=TooClose
-				BL PutStringSB
-				POP {R1}
-EndJP			POP {PC}
-				ENDP
+				PUSH {LR}				;Push saved registers
+				MOVS R1,#0              ;Reset score
+				MOVS R2,#0              ;Reset counter
+JP				CMP R2,#8               ;Set loop condition
+				BEQ EndDecideJP         ;Decide the choice 
+				LDRB R3,[R4,R2]         ;Load in first value
+				ADDS R4,R4,#1           ;Increment pointer
+				CMP R3,#'A'             ;Check if choice was 'A'
+				BEQ IncrementJP         ;Increment 
+				CMP R3,#'B'             ;Check if choice was 'B'
+				BEQ NoIncrementJP       ;Do nothing
+				CMP R3,#'C'             ;Check if choice was 'C'
+				BEQ DecrementJP         ;Decrement
+NoIncrementJP	ADDS R2,R2,#1           ;Increment index
+				B JP                    ;Loop again
+				                        
+IncrementJP		ADDS R1,R1,#1           ;Increment score
+				ADDS R2,R2,#1           ;Increment pointer
+				B JP                    ;Loop
+DecrementJP		SUBS R1,R1,#1           ;Decrement score
+				ADDS R2,R2,#1           ;Increment pointer
+				B JP                    ;Loop
+                                        
+EndDecideJP		CMP R1,#0               ;Compare score against 0
+				BGT Judge               ;Check if greater than
+				BLT Percieve            ;Check if less than
+				BEQ UnknownJP           ;Check if equal
+Judge			MOVS R0,#'J'            ;Give letter result
+				BL PutChar              ;Display result	
+				B EndJP                 ;End sub
+Percieve		MOVS R0,#'P'            ;Give letter result
+				BL PutChar              ;Display result
+				B EndJP                 ;End sub
+UnknownJP		PUSH {R1}               ;Store R1
+				MOVS R1,#MAX_STRING     ;R1 <- MAX_STRING
+				LDR R0,=TooClose        ;Load in too close to cal
+				BL PutStringSB          ;Display the string
+				POP {R1}                ;Pop R1
+EndJP			POP {PC}                ;Pop PC
+				ENDP                    ;End Subroutine
 ;>>>>>   end subroutine code <<<<<
             ALIGN
 ;****************************************************************
@@ -996,17 +1004,17 @@ __Vectors_Size  EQU     __Vectors_End - __Vectors
 Welcome DCB "Welcome to the personality test! Let's begin!",0
 ;Questions
 
-Question1	DCB		"I see myself as enthusiastic.",0
-Question2	DCB		"I look outside for motivation to act, change, or interact.",0
+Question1	DCB		"1. I see myself as enthusiastic.",0
+Question2	DCB		"2. I look outside for motivation to act, change, or interact.",0
 
-Question3	DCB		"I learn via direct observation.",0
-Question4	DCB		"I learn via practical applications.",0
+Question3	DCB		"3. I learn via direct observation.",0
+Question4	DCB		"4. I learn via practical applications.",0
 
-Question5	DCB		"Less expensive and faster is the way to go.",0
-Question6	DCB		"Thinking from the mind is better than thinking from the heart.",0
+Question5	DCB		"5. Less expensive and faster is the way to go.",0
+Question6	DCB		"6. Thinking from the mind is better than thinking from the heart.",0
 
-Question7	DCB		"A clear-and-cut process or a one more leaned towards adaptability.",0
-Question8	DCB		"Following a process is better than thinking in the moment.",0
+Question7	DCB		"7. A clear-and-cut process or a one more leaned towards adaptability.",0
+Question8	DCB		"8. Following a process is better than thinking in the moment.",0
 
 ;Choices per question
 Yes 		DCB "A. Yes",0 ;ESTJ
