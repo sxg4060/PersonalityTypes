@@ -331,7 +331,7 @@ main
 			BL DisplayChoices		;Display the choices for the user
 			BL GetChar			;Get a character from the user
 			BL PutChar
-			LDR R4,=Choices			;Load in the memory address of Choice
+			;LDR R4,=Choices			;Load in the memory address of Choice
 			BL CheckChoices			;Check to see if choice was valid and convert it
 			BL CRLF					;Carriage Return and Line Feed (equivalent to hitting the enter key)
 			;Third Question
@@ -341,7 +341,7 @@ main
 			BL DisplayChoices		;Display the choices for the user		
 			BL GetChar			;Get a character from the user
 			BL PutChar
-			LDR R4,=Choices			;Load in the memory address of Choice
+			;LDR R4,=Choices			;Load in the memory address of Choice
 			BL CheckChoices			;Check to see if choice was valid and convert it
 			BL CRLF					;Carriage Return and Line Feed (equivalent to hitting the enter key)
 			;Fourth Question
@@ -351,7 +351,7 @@ main
 			BL DisplayChoices		;Display the choices for the user			
 			BL GetChar			;Get a character from the user
 			BL PutChar
-			LDR R4,=Choices			;Load in the memory address of Choice
+			;LDR R4,=Choices			;Load in the memory address of Choice
 			BL CheckChoices			;Check to see if choice was valid and convert it
 			BL CRLF					;Carriage Return and Line Feed
 			;Fifth Question
@@ -361,7 +361,7 @@ main
 			BL DisplayChoices		;Display the choices for the user			
 			BL GetChar			;Get a character from the user
 			BL PutChar
-			LDR R4,=Choices			;Load in the memory address of Choice
+			;LDR R4,=Choices			;Load in the memory address of Choice
 			BL CheckChoices			;Check to see if choice was valid and convert it
 			BL CRLF					;Carriage Return and Line Feed
 			;Sixth Question
@@ -371,7 +371,7 @@ main
 			BL DisplayChoices		;Display the choices for the user			
 			BL GetChar			;Get a character from the user
 			BL PutChar
-			LDR R4,=Choices			;Load in the memory address of Choice
+			;LDR R4,=Choices			;Load in the memory address of Choice
 			BL CheckChoices			;Check to see if choice was valid and convert it
 			BL CRLF					;Carriage Return and Line Feed
 			;Seventh Question
@@ -381,7 +381,7 @@ main
 			BL DisplayChoices		;Display the choices for the user
 			BL GetChar			;Get a character from the user
 			BL PutChar
-			LDR R4,=Choices			;Load in the memory address of Choice
+			;LDR R4,=Choices			;Load in the memory address of Choice
 			BL CheckChoices			;Check to see if choice was valid and convert it
 			BL CRLF					;Carriage Return and Line Feed
 			;Eigth Question
@@ -391,7 +391,7 @@ main
 			BL DisplayChoices		;Display the choices for the user			
 			BL GetChar			;Get a character from the user
 			BL PutChar
-			LDR R4,=Choices			;Load in the memory address of Choice
+			;LDR R4,=Choices			;Load in the memory address of Choice
 			BL CheckChoices			;Check to see if choice was valid and convert it
 			BL CRLF					;Carriage Return and Line Feed
 			;Stop Counter
@@ -422,7 +422,13 @@ main
 			BL CRLF					;CR and LF
 			;Give choice
 			LDR R4,=Choices
-			BL Decide				;Decide upon the personality type the user is
+			BL DecideEI				;Decide upon Extraverted/Intraverted
+			;BL CRLF
+			BL DecideSN
+			;BL CRLF
+			BL DecideTF
+			;BL CRLF
+			BL DecideJP
 			B .
 ;>>>>>   end main program code <<<<<
 ;Stay here
@@ -676,7 +682,7 @@ CheckChoices	PROC {R0-R13},{}
 ;R0 = Holds the answer that the user typed.
 ;R1 = Memory address of choice
 ;Outputs: Stores answer choice in memory
-				PUSH {R1,R4,LR}		;Push registers to modify onto stack.
+				PUSH {R1,LR}		;Push registers to modify onto stack.
 				CMP R0,#'A'
 				BEQ green
 				CMP R0,#'B'
@@ -716,12 +722,12 @@ both			BL BOTH_OFF
 				B store
 store			STRB R0,[R4,#0]		;Store answer choice into memory
 				ADDS R4,R4,#1		;Increment pointer
-				POP {R1,R4,PC}
+				POP {R1,PC}
 				ENDP
 
 ;---------------------------------------------------------------
-Decide			PROC {R0-R13},{}
-;This subroutine gives the user their personality type
+DecideEI		PROC {R0-R13},{}
+;This subroutine gives the user an extraverted or intraverted response
 ;Inputs:
 ;R0 = M[choices]
 ;R1 = Score
@@ -729,20 +735,191 @@ Decide			PROC {R0-R13},{}
 ;Outputs:
 ;R0 = Your personality type
 				PUSH {LR}
+				MOVS R1,#0
 				MOVS R2,#0
-DecideLoop		CMP R2,#10
-				BEQ EndDecide
-				LDRB R3,[R4,#0]
+EI				CMP R2,#2
+				BEQ EndDecideEI
+				LDRB R3,[R4,R2]
 				ADDS R4,R4,#1
 				CMP R3,#'A'
-				BEQ NoIncrement
+				BEQ IncrementEI
 				CMP R3,#'B'
-				BEQ Increment
+				BEQ NoIncrementEI
 				CMP R3,#'C'
-				BEQ Increment
-NoIncrement		B DecideLoop
-Increment		ADDS R1,R1,#1
-EndDecide		POP {PC}
+				BEQ DecrementEI
+NoIncrementEI	ADDS R2,R2,#1
+				B EI
+				
+IncrementEI		ADDS R1,R1,#1
+				ADDS R2,R2,#1
+				B EI
+DecrementEI		SUBS R1,R1,#1
+				ADDS R2,R2,#1
+				B EI
+
+EndDecideEI		CMP R1,#0
+				BGT Extra
+				BLT Intra
+				BEQ UnknownEI
+Extra			MOVS R0,#'E'
+				BL PutChar
+				B EndEI
+Intra			MOVS R0,#'I'
+				BL PutChar
+				B EndEI
+UnknownEI		PUSH {R1}
+				MOVS R1,#MAX_STRING
+				LDR R0,=TooClose
+				BL PutStringSB
+				POP {R1}
+EndEI			POP {PC}
+				ENDP
+;----------------------------------------------------------------
+DecideSN		PROC {R0-R13},{}
+;This subroutine gives the user an extraverted or intraverted response
+;Inputs:
+;R0 = M[choices]
+;R1 = Score
+;R2 = Counter for Size of Array
+;Outputs:
+;R0 = Your personality type
+				PUSH {LR}
+				MOVS R1,#0
+				MOVS R2,#0
+SN				CMP R2,#2
+				BEQ EndDecideSN
+				LDRB R3,[R4,R2]
+				ADDS R4,R4,#1
+				CMP R3,#'A'
+				BEQ IncrementSN
+				CMP R3,#'B'
+				BEQ NoIncrementSN
+				CMP R3,#'C'
+				BEQ DecrementSN
+NoIncrementSN	ADDS R2,R2,#1
+				B SN
+				
+IncrementSN		ADDS R1,R1,#1
+				ADDS R2,R2,#1
+				B SN
+DecrementSN		SUBS R1,R1,#1
+				ADDS R2,R2,#1
+				B SN
+
+EndDecideSN		CMP R1,#0
+				BGT Sense
+				BLT Intuition
+				BEQ UnknownSN
+Sense			MOVS R0,#'S'
+				BL PutChar
+				B EndSN
+Intuition		MOVS R0,#'N'
+				BL PutChar
+				B EndSN
+UnknownSN		PUSH {R1}
+				MOVS R1,#MAX_STRING
+				LDR R0,=TooClose
+				BL PutStringSB
+				POP {R1}
+EndSN			POP {PC}
+				ENDP
+;----------------------------------------------------------------
+DecideTF		PROC {R0-R13},{}
+;This subroutine gives the user an extraverted or intraverted response
+;Inputs:
+;R0 = M[choices]
+;R1 = Score
+;R2 = Counter for Size of Array
+;Outputs:
+;R0 = Your personality type
+				PUSH {LR}
+				MOVS R1,#0
+				MOVS R2,#0
+TF				CMP R2,#2
+				BEQ EndDecideTF
+				LDRB R3,[R4,R2]
+				ADDS R4,R4,#1
+				CMP R3,#'A'
+				BEQ IncrementTF
+				CMP R3,#'B'
+				BEQ NoIncrementTF
+				CMP R3,#'C'
+				BEQ DecrementTF
+NoIncrementTF	ADDS R2,R2,#1
+				B TF
+				
+IncrementTF		ADDS R1,R1,#1
+				ADDS R2,R2,#1
+				B TF
+DecrementTF		SUBS R1,R1,#1
+				ADDS R2,R2,#1
+				B TF
+
+EndDecideTF		CMP R1,#0
+				BGT Think
+				BLT Feel
+				BEQ UnknownTF
+Think			MOVS R0,#'T'
+				BL PutChar
+				B EndTF
+Feel			MOVS R0,#'F'
+				BL PutChar
+				B EndTF
+UnknownTF		PUSH {R1}
+				MOVS R1,#MAX_STRING
+				LDR R0,=TooClose
+				BL PutStringSB
+				POP {R1}
+EndTF			POP {PC}
+				ENDP
+;----------------------------------------------------------------
+DecideJP		PROC {R0-R13},{}
+;This subroutine gives the user an extraverted or intraverted response
+;Inputs:
+;R0 = M[choices]
+;R1 = Score
+;R2 = Counter for Size of Array
+;Outputs:
+;R0 = Your personality type
+				PUSH {LR}
+				MOVS R1,#0
+				MOVS R2,#0
+JP				CMP R2,#8
+				BEQ EndDecideJP
+				LDRB R3,[R4,R2]
+				ADDS R4,R4,#1
+				CMP R3,#'A'
+				BEQ IncrementJP
+				CMP R3,#'B'
+				BEQ NoIncrementJP
+				CMP R3,#'C'
+				BEQ DecrementJP
+NoIncrementJP	ADDS R2,R2,#1
+				B JP
+				
+IncrementJP		ADDS R1,R1,#1
+				ADDS R2,R2,#1
+				B JP
+DecrementJP		SUBS R1,R1,#1
+				ADDS R2,R2,#1
+				B JP
+
+EndDecideJP		CMP R1,#0
+				BGT Judge
+				BLT Percieve
+				BEQ UnknownJP
+Judge			MOVS R0,#'J'
+				BL PutChar
+				B EndJP
+Percieve		MOVS R0,#'P'
+				BL PutChar
+				B EndJP
+UnknownJP		PUSH {R1}
+				MOVS R1,#MAX_STRING
+				LDR R0,=TooClose
+				BL PutStringSB
+				POP {R1}
+EndJP			POP {PC}
 				ENDP
 ;>>>>>   end subroutine code <<<<<
             ALIGN
@@ -835,25 +1012,10 @@ Question8	DCB		"Following a process is better than thinking in the moment.",0
 Yes 		DCB "A. Yes",0 ;ESTJ
 Unsure 		DCB "B. Unsure",0 ;Unknown
 No 			DCB "C. No",0 ;INFP
+;Too close to call
+TooClose	DCB "(Too close to call.)",0
 ;Invalid response
 invalidChoice DCB "Invalid choice. Please try again.",0
-;Personality Types
-ISTJ DCB 	"ISTJ - Logistician",0
-INFJ DCB 	"INFJ - Advocate",0
-INFP DCB 	"INFP - Mediator",0
-INTJ DCB 	"INTJ - Architect",0
-INTP DCB 	"INTP - Logician",0
-ISTP DCB 	"ISTP - Virtuoso",0
-ISFJ DCB 	"ISFJ - Defender",0
-ISFP DCB 	"ISFP - Adventurer",0
-ENTJ DCB 	"ENTJ - Commander",0
-ENTP DCB 	"ENTP - Debater",0
-ENFJ DCB 	"ENFJ - Protagonist",0
-ENFP DCB 	"ENFP - Campaigner",0
-ESFJ DCB 	"ESFJ - Consul",0
-ESTJ DCB 	"ESTJ - Executive",0
-ESTP DCB 	"ESTP - Entrepreneur",0
-ESFP DCB 	"ESFP - Entertainer",0
 ;Goodbye Message
 Bye	 DCB 	"Thank you for taking the test! Goodbye now.",0
 ;Time Message
