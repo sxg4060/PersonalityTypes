@@ -320,7 +320,7 @@ main
 			BL PutStringSB			;Display the welcome message on the terminal			
 			BL CRLF 					;Carriage Return and Line Feed (equivalent to hitting the enter key)
 			;First Question
-			LDR R0,=Question1		;Load the first question into R0
+rep			LDR R0,=Question1		;Load the first question into R0
 			BL PutStringSB			;Display the first question
 			BL CRLF 				;Enter Key
 			BL DisplayChoices		;Display the choices for the user	
@@ -329,7 +329,6 @@ main
 			MOVS R3,#1				;Load a 1 into R6 to set stop watch boolean
 			STRB R3,[R2,#0]			;Move a one into the stop watch to let the count increment
 			BL GetChar				;Get a character from the user
-			BL PutChar
 			LDR R4,=Choices			;Load in the memory address of Choice
 			BL CheckChoices			;Check to see if choice was valid and convert it
 			BL CRLF					;Carriage Return and Line Feed (equivalent to hitting the enter key)
@@ -431,10 +430,38 @@ main
 			BL CRLF					;CR and LF
 			;Give choice
 			LDR R4,=Choices			;Load in all the choices
+			LDR R0,=List
+			MOVS R1,R5
+			BL PutStringSB
+			MOVS R7,#0
+loopC		CMP R7,#8
+			BEQ decision
+			LDRB R0,[R4,R7]
+			ADDS R7,R7,#1
+			BL PutChar
+			B loopC
+decision	BL CRLF
+			LDR R0,=Repeat
+			BL PutStringSB
+			BL GetChar
+			CMP R0,#'y'
+			BEQ yes
+			CMP R0,#'Y'
+			BEQ yes
+			CMP R0,#'n'
+			BEQ no
+			CMP R0,#'N'
+			BEQ no
+yes			BL CRLF
+			B rep
+no			BL CRLF
+			LDR R0,=Decision
+			BL PutStringSB
 			BL DecideEI				;Decide upon Extraverted/Intraverted
 			BL DecideSN				;Decide upon Sensing/Intuition
 			BL DecideTF				;Decide upon thinking/feeling
 			BL DecideJP				;Decide upon judging/percieving 
+			
 			B .						;End test
 ;>>>>>   end main program code <<<<<
 ;Stay here
@@ -555,7 +582,7 @@ While   	BL GetChar       ;Call GetChar to get the character from the user input
 			BLO While			;If the input is less than 0x1F, then ignore the character and branch back to while
 			CMP R0,#0x7F		;Compare input to delete
 			BEQ IgnoreBack		;If the input is 0x07F, then branch to IgnoreBack, which null terminates the character
-			BL PutChar		;Display the character on the terminal
+			BL PutChar			;Display the character on the terminal
 			STRB R0,[R2,R3]		;Store the character into the String's memory address in R2, with an offset of R3
 			ADDS R3,R3,#1		;Increment counter to go to next index of the string
 			CMP R3,R1         	;Compare my counter to the max string size
@@ -1026,9 +1053,14 @@ TooClose	DCB "(Too close to call.)",0
 invalidChoice DCB "Invalid choice. Please try again.",0
 ;Goodbye Message
 Bye	 DCB 	"Thank you for taking the test! Goodbye now.",0
+;Repeat
+List DCB "These are your choices: ",0
+Repeat DCB "Would you like to repeat for different answer choices (Y/N)? ",0
 ;Time Message
 TimeT DCB    "Time took to complete this: ",0
 TimeP DCB "0.01 s",0
+;Decision
+Decision DCB "You are: ",0
 ;>>>>>   end constants here <<<<<		
             ALIGN
 ;****************************************************************
