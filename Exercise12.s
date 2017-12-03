@@ -310,7 +310,6 @@ main
 			MOVS R5,#MAX_STRING		;Load in a buffer capacity for the string
 			BL PutStringSB			;Display the welcome message on the terminal			
 			BL CRLF					;Carriage Return and Line Feed (equivalent to hitting the enter key)
-			
 			;First Question
 			LDR R0,=Question1		;Load the first question into R0
 			BL PutStringSB			;Display the first question
@@ -395,27 +394,6 @@ main
 			LDR R4,=Choices			;Load in the memory address of Choice
 			BL CheckChoices			;Check to see if choice was valid and convert it
 			BL CRLF					;Carriage Return and Line Feed
-			;Ninth Question
-			LDR R0,=Question9				;Load the third question into R0
-			BL PutStringSB			;Display the first question
-			BL CRLF 				;Enter Key
-			BL DisplayChoices		;Display the choices for the user		
-			BL GetChar			;Get a character from the user
-			BL PutChar
-			LDR R4,=Choices			;Load in the memory address of Choice
-			BL CheckChoices			;Check to see if choice was valid and convert it
-			BL CRLF					;Carriage Return and Line Feed
-			;Tenth Question
-			LDR R0,=Question10				;Load the third question into R0
-			BL PutStringSB			;Display the first question
-			BL CRLF 				;Enter Key
-			BL DisplayChoices		;Display the choices for the user
-			BL GetChar			;Get a character from the user
-			BL PutChar
-			LDR R4,=Choices			;Load in the memory address of Choice
-			BL CheckChoices			;Check to see if choice was valid and convert it
-			BL CRLF					;Carriage Return and Line Feed
-			
 			;Stop Counter
 			LDR R0,=RunStopWatch	;Load in stop watch boolean
 			MOVS R6,#0
@@ -699,12 +677,18 @@ CheckChoices	PROC {R0-R13},{}
 ;R1 = Memory address of choice
 ;Outputs: Stores answer choice in memory
 				PUSH {R1,R4,LR}		;Push registers to modify onto stack.
+				CMP R0,#'A'
+				BEQ green
+				CMP R0,#'B'
+				BEQ both
+				CMP R0,#'C'
+				BEQ red
 checkA			CMP R0,#'a'			;Compare input to 'a'
 				BHS checktheZ		;Checks if input is less than z
 				B tryAgain			;If it is not zero, then
-checktheZ		CMP R0,#'f'		 	;Compare input to 'f'
+checktheZ		CMP R0,#'c'		 	;Compare input to 'f'
 				BLS validLetter	 	;It's valid if in the range
-				BHS tryAgain;If input > 'z,' end the checker
+				BHS tryAgain		;If input > 'z,' end the checker
 tryAgain		BL CRLF
 				MOVS R1,#MAX_STRING
 				LDR R0,=invalidChoice
@@ -716,19 +700,11 @@ tryAgain		BL CRLF
 validLetter		
 				SUBS R0,R0,#0x20 	;Convert to ASCII
 				CMP R0,#'A'
-				BEQ red
+				BEQ green
 				CMP R0,#'B'
-				BEQ red
+				BEQ both
 				CMP R0,#'C'
 				BEQ red
-				CMP R0,#'D'
-				BEQ both
-				CMP R0,#'E'
-				BEQ green
-				CMP R0,#'F'
-				BEQ green
-				CMP R0,#'G'
-				BEQ green
 green			BL BOTH_OFF		
 				BL GREEN_ON
 				B store
@@ -764,14 +740,6 @@ DecideLoop		CMP R2,#10
 				BEQ Increment
 				CMP R3,#'C'
 				BEQ Increment
-				CMP R3,#'D'
-				BEQ NoIncrement
-				CMP R3,#'E'
-				BEQ Increment
-				CMP R3,#'F'
-				BEQ Increment
-				CMP R3,#'G'
-				BEQ NoIncrement
 NoIncrement		B DecideLoop
 Increment		ADDS R1,R1,#1
 EndDecide		POP {PC}
@@ -850,19 +818,23 @@ __Vectors_Size  EQU     __Vectors_End - __Vectors
 ;Welcome Message
 Welcome DCB "Welcome to the personality test! Let's begin!",0
 ;Questions
+
 Question1	DCB		"I see myself as enthusiastic.",0
-Question2	DCB		"I love going out!",0
-Question3	DCB		"I see myself as dependable, self-disciplined.",0
-Question4	DCB		"I see myself as anxious, easily upset.",0
-Question5	DCB		"I see myself as open to new experiences, complex.",0
-Question6	DCB		"I see myself as reserved, quiet.",0
-Question7	DCB		"I see myself as sympathetic, warm.",0
-Question8	DCB		"I see myself as disorganized, careless.",0
+Question2	DCB		"I look outside for motivation to act, change, or interact.",0
+
+Question3	DCB		"I learn via direct observation.",0
+Question4	DCB		"I learn via practical applications.",0
+
+Question5	DCB		"Less expensive and faster is the way to go.",0
+Question6	DCB		"Thinking from the mind is better than thinking from the heart.",0
+
+Question7	DCB		"A clear-and-cut process or a one more leaned towards adaptability.",0
+Question8	DCB		"Following a process is better than thinking in the moment.",0
 
 ;Choices per question
-Yes 		DCB "Yes",0
-Unsure 		DCB "Unsure",0
-No 			DCB "No",0
+Yes 		DCB "A. Yes",0 ;ESTJ
+Unsure 		DCB "B. Unsure",0 ;Unknown
+No 			DCB "C. No",0 ;INFP
 ;Invalid response
 invalidChoice DCB "Invalid choice. Please try again.",0
 ;Personality Types
