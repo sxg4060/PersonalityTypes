@@ -469,6 +469,16 @@ no			BL CRLF					;New Line
 			BL PutStringSB			;Display score prompt
 			POP {R1}				;Pop R1
 			MOVS R0,R1				;Move R1 into R0
+            CMP R0,#0
+            BLT negative
+            B positive
+negative    MVNS R5,R0
+            MOVS R0,#'-'
+            BL PutChar
+            ;MOVS R0,R5
+            ADDS R0,R5,#1
+            B positive
+positive             
 			BL PutNumU				;Display score
 			B .						;End test
 ;>>>>>   end main program code <<<<<
@@ -782,7 +792,7 @@ DecideEI		PROC {R0-R13},{}
 				MOVS R2,#0				;Reset counter
 EI				CMP R2,#2				;Set loop condition
 				BEQ EndDecideEI			;Decide the choice 
-				LDRB R3,[R4,R2]			;Load in first value
+				LDRB R3,[R4,#0]			;Load in first value
 				ADDS R4,R4,#1			;Increment pointer
 				CMP R3,#'A'				;Check if choice was 'A'
 				BEQ IncrementEI			;Increment 
@@ -790,13 +800,16 @@ EI				CMP R2,#2				;Set loop condition
 				BEQ NoIncrementEI		;Do nothing
 				CMP R3,#'C'				;Check if choice was 'C'
 				BEQ DecrementEI			;Decrement
-NoIncrementEI	ADDS R2,R2,#1			;Increment index
+NoIncrementEI	
+                ADDS R2,R2,#1			;Increment index
 				B EI					;Loop again
 				
-IncrementEI		ADDS R1,R1,#1			;Increment score
+IncrementEI		
+                ADDS R1,R1,#1			;Increment score
 				ADDS R2,R2,#1			;Increment pointer
 				B EI					;Loop
-DecrementEI		SUBS R1,R1,#1			;Decrement score
+DecrementEI		
+                SUBS R1,R1,#1			;Decrement score
 				ADDS R2,R2,#1			;Increment pointer
 				B EI					;Loop
 
@@ -827,11 +840,11 @@ DecideSN		PROC {R0-R13},{}
 ;Outputs:
 ;R0 = Your personality type
 				PUSH {LR}				;Push saved registers
-				MOVS R1,#0              ;Reset score
+				;MOVS R1,#0              ;Reset score
 				MOVS R2,#0              ;Reset counter
 SN				CMP R2,#2               ;Set loop condition
 				BEQ EndDecideSN         ;Decide the choice 
-				LDRB R3,[R4,R2]         ;Load in first value
+				LDRB R3,[R4,#0]         ;Load in first value
 				ADDS R4,R4,#1           ;Increment pointer
 				CMP R3,#'A'             ;Check if choice was 'A'
 				BEQ IncrementSN         ;Increment 
@@ -839,13 +852,16 @@ SN				CMP R2,#2               ;Set loop condition
 				BEQ NoIncrementSN       ;Do nothing
 				CMP R3,#'C'             ;Check if choice was 'C'
 				BEQ DecrementSN         ;Decrement
-NoIncrementSN	ADDS R2,R2,#1           ;Increment index
+NoIncrementSN	
+                ADDS R2,R2,#1           ;Increment index
 				B SN                    ;Loop again
 				                        
-IncrementSN		ADDS R1,R1,#1           ;Increment score
+IncrementSN		
+                ADDS R1,R1,#1           ;Increment score
 				ADDS R2,R2,#1           ;Increment pointer
 				B SN                    ;Loop
-DecrementSN		SUBS R1,R1,#1           ;Decrement score
+DecrementSN		
+                SUBS R1,R1,#1           ;Decrement score
 				ADDS R2,R2,#1           ;Increment pointer
 				B SN                    ;Loop
                                         
@@ -876,11 +892,11 @@ DecideTF		PROC {R0-R13},{}
 ;Outputs:
 ;R0 = Your personality type
 				PUSH {LR}				;Push saved registers
-				MOVS R1,#0              ;Reset score
+				;MOVS R1,#0              ;Reset score
 				MOVS R2,#0              ;Reset counter
 TF				CMP R2,#2               ;Set loop condition
 				BEQ EndDecideTF         ;Decide the choice 
-				LDRB R3,[R4,R2]         ;Load in first value
+				LDRB R3,[R4,#0]         ;Load in first value
 				ADDS R4,R4,#1           ;Increment pointer
 				CMP R3,#'A'             ;Check if choice was 'A'
 				BEQ IncrementTF         ;Increment 
@@ -888,13 +904,16 @@ TF				CMP R2,#2               ;Set loop condition
 				BEQ NoIncrementTF       ;Do nothing
 				CMP R3,#'C'             ;Check if choice was 'C'
 				BEQ DecrementTF         ;Decrement
-NoIncrementTF	ADDS R2,R2,#1           ;Increment index
+NoIncrementTF	
+                ADDS R2,R2,#1           ;Increment index
 				B TF                    ;Loop again
 				                        
-IncrementTF		ADDS R1,R1,#1           ;Increment score
+IncrementTF		
+                ADDS R1,R1,#1           ;Increment score
 				ADDS R2,R2,#1           ;Increment pointer
 				B TF                    ;Loop
-DecrementTF		SUBS R1,R1,#1           ;Decrement score
+DecrementTF		
+                SUBS R1,R1,#1           ;Decrement score
 				ADDS R2,R2,#1           ;Increment pointer
 				B TF                    ;Loop
                                         
@@ -925,11 +944,11 @@ DecideJP		PROC {R0-R13},{}
 ;Outputs:
 ;R0 = Your personality type
 				PUSH {LR}				;Push saved registers
-				MOVS R1,#0              ;Reset score
+				;MOVS R1,#0              ;Reset score
 				MOVS R2,#0              ;Reset counter
 JP				CMP R2,#8               ;Set loop condition
 				BEQ EndDecideJP         ;Decide the choice 
-				LDRB R3,[R4,R2]         ;Load in first value
+				LDRB R3,[R4,#0]         ;Load in first value
 				ADDS R4,R4,#1           ;Increment pointer
 				CMP R3,#'A'             ;Check if choice was 'A'
 				BEQ IncrementJP         ;Increment 
@@ -937,13 +956,16 @@ JP				CMP R2,#8               ;Set loop condition
 				BEQ NoIncrementJP       ;Do nothing
 				CMP R3,#'C'             ;Check if choice was 'C'
 				BEQ DecrementJP         ;Decrement
-NoIncrementJP	ADDS R2,R2,#1           ;Increment index
+NoIncrementJP	
+                ADDS R2,R2,#1           ;Increment index
 				B JP                    ;Loop again
 				                        
-IncrementJP		ADDS R1,R1,#1           ;Increment score
+IncrementJP		
+                ADDS R1,R1,#1           ;Increment score
 				ADDS R2,R2,#1           ;Increment pointer
 				B JP                    ;Loop
-DecrementJP		SUBS R1,R1,#1           ;Decrement score
+DecrementJP		
+                SUBS R1,R1,#1           ;Decrement score
 				ADDS R2,R2,#1           ;Increment pointer
 				B JP                    ;Loop
                                         

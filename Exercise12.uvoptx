@@ -101,7 +101,7 @@
         <sRunDeb>0</sRunDeb>
         <sLrtime>0</sLrtime>
         <bEvRecOn>1</bEvRecOn>
-        <nTsel>2</nTsel>
+        <nTsel>12</nTsel>
         <sDll></sDll>
         <sDllPa></sDllPa>
         <sDlgDll></sDlgDll>
@@ -150,9 +150,9 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>434</LineNumber>
+          <LineNumber>460</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>1380</Address>
+          <Address>1446</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -161,23 +161,7 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>.\Exercise12.s</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\Exercise12\Exercise12.s\434</Expression>
-        </Bp>
-        <Bp>
-          <Number>1</Number>
-          <Type>0</Type>
-          <LineNumber>437</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>0</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>0</BreakIfRCount>
-          <Filename>.\Exercise12.s</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression></Expression>
+          <Expression>\\Exercise12\Exercise12.s\460</Expression>
         </Bp>
       </Breakpoint>
       <MemoryWindow1>
